@@ -28,7 +28,7 @@ from collections import defaultdict
 from datetime import datetime, timedelta
 from json import JSONDecodeError
 from operator import itemgetter
-from typing import Dict, List, Optional, Tuple
+from typing import Dict, List, Optional, Set, Tuple
 from urllib.parse import parse_qsl, unquote, urlencode, urlparse
 
 import lazy_object_proxy
@@ -1978,6 +1978,18 @@ class Airflow(AirflowBaseView):  # noqa: D101  pylint: disable=too-many-public-m
         node_count = 0
         node_limit = 5000 / max(1, len(dag.leaves))
 
+        upstream_tasks: Dict[str, Set] = {}
+        downstream_tasks: Set = set()
+        for t in dag.tasks:
+            if t.get_subscribed_events():
+                downstream_tasks.add(t)
+                for event_namespace, event_key, event_type, from_task_id in BaseSerialization._deserialize(t.get_subscribed_events()):
+                    downstream_task = dag.get_task(t.task_id)
+                    if from_task_id in upstream_tasks:
+                        upstream_tasks[from_task_id].add(downstream_task)
+                    else:
+                        upstream_tasks[from_task_id] = {downstream_task}
+
         def encode_ti(task_instance: Optional[models.TaskInstance]) -> Optional[List]:
             if not task_instance:
                 return None
@@ -2006,21 +2018,24 @@ class Airflow(AirflowBaseView):  # noqa: D101  pylint: disable=too-many-public-m
             visited.add(task)
             task_id = task.task_id
 
+            task_downstream = upstream_tasks[task.task_id].union(
+                task.downstream_list) if task.task_id in upstream_tasks else task.downstream_list
+
             node = {
                 'name': task.task_id,
                 'instances': [encode_ti(task_instances.get((task_id, d))) for d in dates],
-                'num_dep': len(task.downstream_list),
+                'num_dep': len(task_downstream),
                 'operator': task.task_type,
                 'retries': task.retries,
                 'owner': task.owner,
                 'ui_color': task.ui_color,
             }
 
-            if task.downstream_list:
+            if task_downstream:
                 children = [
-                    recurse_nodes(t, visited)
-                    for t in task.downstream_list
-                    if node_count < node_limit or t not in visited
+                    recurse_nodes(d, visited)
+                    for d in task_downstream
+                    if node_count < node_limit or d not in visited
                 ]
 
                 # D3 tree uses children vs _children to define what is
@@ -2047,7 +2062,7 @@ class Airflow(AirflowBaseView):  # noqa: D101  pylint: disable=too-many-public-m
 
         data = {
             'name': '[DAG]',
-            'children': [recurse_nodes(t, set()) for t in dag.roots],
+            'children': [recurse_nodes(t, set()) for t in [n for n in dag.roots if n not in downstream_tasks]],
             'instances': [dag_runs.get(d) or {'execution_date': d.isoformat()} for d in dates],
         }
 
