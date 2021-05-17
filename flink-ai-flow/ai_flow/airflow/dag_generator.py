@@ -47,7 +47,7 @@ def job_name_to_task_id(job_name):
     elif first_index == last_index:
         return job_name
     else:
-        return job_name[first_index+1: last_index]
+        return job_name[first_index + 1: last_index]
 
 
 class AirflowCodeGenerator(ABC):
@@ -88,9 +88,9 @@ class DAGTemplate(object):
 import datetime
 from airflow.contrib.jobs.event_handlers import AIFlowHandler
 from airflow.operators.bash import BashOperator\n"""
-# from ai_flow.deployer.utils.kubernetes_util import load_kubernetes_config
-# import ai_flow as af
-# load_kubernetes_config()\n"""
+    # from ai_flow.deployer.utils.kubernetes_util import load_kubernetes_config
+    # import ai_flow as af
+    # load_kubernetes_config()\n"""
 
     SET_CONFIG = """af.set_project_config_file('{0}')\naf.set_master_config()\n"""
 
@@ -100,7 +100,7 @@ from airflow.operators.bash import BashOperator\n"""
     DAG_DEFINE = """dag = DAG(dag_id='{0}', default_args=default_args)\n"""
 
     PERIODIC_CONFIG = """op_{0}.executor_config = {{'periodic_config': {1}}}
-op_{0}.subscribe_event('UNREACHED_EVENT', 'UNREACHED_EVENT', 'UNREACHED_EVENT')\n"""
+op_{0}.subscribe_event('UNREACHED_EVENT', 'UNREACHED_EVENT', 'UNREACHED_EVENT', None)\n"""
 
     UPSTREAM_OP = """{0}.set_upstream({1})\n"""
 
@@ -145,7 +145,8 @@ class DAGGenerator(object):
         op_set = set()
         for name, job in workflow.jobs.items():
             if job.exec_engine != DummyEngine.engine():
-                generator: AirflowCodeGenerator = get_airflow_code_manager().get_generator(job.platform, job.exec_engine)
+                generator: AirflowCodeGenerator = get_airflow_code_manager().get_generator(job.platform,
+                                                                                           job.exec_engine)
                 if generator not in op_set:
                     code_text += generator.generate_operator_code()
                     op_set.add(generator)

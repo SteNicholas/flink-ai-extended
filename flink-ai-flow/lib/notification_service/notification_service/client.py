@@ -17,8 +17,9 @@
 # under the License.
 #
 import logging
-import threading
 import os
+import threading
+import time
 import uuid
 from collections import Iterable
 from functools import wraps
@@ -26,14 +27,13 @@ from random import shuffle
 from typing import Union, List, Tuple, Dict, Any
 
 import grpc
-import time
 
 from notification_service.base_notification import BaseNotification, EventWatcher, BaseEvent, EventWatcherHandle, \
     ANY_CONDITION
+from notification_service.proto import notification_service_pb2_grpc
 from notification_service.proto.notification_service_pb2 \
     import SendEventRequest, ListEventsRequest, EventProto, ReturnStatus, ListAllEventsRequest, \
     GetLatestVersionByKeyRequest, ListMembersRequest
-from notification_service.proto import notification_service_pb2_grpc
 from notification_service.util.utils import event_proto_to_event, proto_to_member, sleep_and_detecting_running
 
 if not hasattr(time, 'time_ns'):
@@ -169,8 +169,8 @@ class NotificationClient(BaseNotification):
         List specific events in Notification Service.
 
         :param key: Key of the event for listening.
-        :param namespace: Namespace of the event for listening.
-        :param version: (Optional) The version of the events must greater than this version.
+        :param namespace: (Optional) Namespace of the event for listening.
+        :param version: (Optional) Version of the events must greater than this version.
         :param event_type: (Optional) Type of the events.
         :param start_time: (Optional) Start time of the events.
         :param sender: The event sender.
@@ -214,7 +214,7 @@ class NotificationClient(BaseNotification):
 
         :param key: Key of notification for listening.
         :param watcher: Watcher instance for listening.
-        :param namespace: Namespace of the event for listening.
+        :param namespace: (Optional) Namespace of the event for listening.
         :param version: (Optional) The version of the events must greater than this version.
         :param event_type: (Optional) Type of the events for listening.
         :param start_time: (Optional) Start time of the events for listening.
@@ -299,7 +299,7 @@ class NotificationClient(BaseNotification):
         Stop listen specific `key` notifications in Notification Service.
 
         :param key: Keys of notification for listening.
-        :param namespace: Namespace of notification for listening.
+        :param namespace: (Optional) Namespace of notification for listening.
         :param event_type: (Optional) Type of the events for listening.
         :param sender: The event sender.
         """
@@ -456,8 +456,8 @@ class NotificationClient(BaseNotification):
     def get_latest_version(self, key: str = None, namespace: str = None):
         """
         get latest event's version by key.
-        :param key: Key of notification for listening.
-        :param namespace: Namespace of notification for listening.
+        :param key: (Optional) Key of notification for listening.
+        :param namespace: (Optional) Namespace of notification for listening.
         :return: Version number of the specific key.
         """
         self.lock.acquire()
@@ -477,10 +477,6 @@ class NotificationClient(BaseNotification):
 
     def _list_members(self):
         while self.ha_running:
-            # sleep for a `list_member_interval`
-            # sleep_and_detecting_running(self.list_member_interval_ms,
-            #                             lambda: self.ha_running)
-
             # refresh the living members
             request = ListMembersRequest(timeout_seconds=int(self.list_member_interval_ms / 1000))
             response = self.notification_stub.listMembers(request)
