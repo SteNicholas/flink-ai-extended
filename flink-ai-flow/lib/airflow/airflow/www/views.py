@@ -356,12 +356,13 @@ def dag_edges(dag):
         subscribed_events = task.get_subscribed_events()
         if subscribed_events:
             for event_namespace, event_key, event_type, from_task_id in BaseSerialization._deserialize(subscribed_events):
-                from_edge = (from_task_id, '{},{},{}'.format(event_namespace, event_key, event_type))
                 to_edge = ('{},{},{}'.format(event_namespace, event_key, event_type), task.task_id)
-                if from_edge not in edges:
-                    edges.add(from_edge)
                 if to_edge not in edges:
                     edges.add(to_edge)
+                if from_task_id:
+                    from_edge = (from_task_id, '{},{},{}'.format(event_namespace, event_key, event_type))
+                    if from_edge not in edges:
+                        edges.add(from_edge)
 
     for root in dag.roots:
         get_downstream(root)
@@ -1985,10 +1986,11 @@ class Airflow(AirflowBaseView):  # noqa: D101  pylint: disable=too-many-public-m
                 downstream_tasks.add(t)
                 for event_namespace, event_key, event_type, from_task_id in BaseSerialization._deserialize(t.get_subscribed_events()):
                     downstream_task = dag.get_task(t.task_id)
-                    if from_task_id in upstream_tasks:
-                        upstream_tasks[from_task_id].add(downstream_task)
-                    else:
-                        upstream_tasks[from_task_id] = {downstream_task}
+                    if from_task_id:
+                        if from_task_id in upstream_tasks:
+                            upstream_tasks[from_task_id].add(downstream_task)
+                        else:
+                            upstream_tasks[from_task_id] = {downstream_task}
 
         def encode_ti(task_instance: Optional[models.TaskInstance]) -> Optional[List]:
             if not task_instance:
