@@ -143,7 +143,7 @@ class EventOperator(LoggingMixin, Operator):
     def subscribe_event(self, event_key: str,
                         event_type: str = UNDEFINED_EVENT_TYPE,
                         event_namespace: str = 'default',
-                        from_task_id: str = ''):
+                        from_task_id: str = None):
         """
         Subscribe to the events with the event_key and event_type. The event_handler will only handle the
         event that the operator subscribes to. event_type is optional, if it is not specify, it subscribes to all type

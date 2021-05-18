@@ -2052,7 +2052,7 @@ class DagEventDependencies(object):
                 for event_namespace, event_key, event_type, from_task_id in dep_set:
                     self.add_dependencies(task_id, EventKey(event_key, event_type, event_namespace), from_task_id)
 
-    def add_dependencies(self, task_id: str, event_key: EventKey, from_task_id: str = ''):
+    def add_dependencies(self, task_id: str, event_key: EventKey, from_task_id: str = None):
         if event_key.namespace not in self.task_event_dependencies:
             self.task_event_dependencies[event_key.namespace] = {}
         namespace_dict = self.task_event_dependencies[event_key.namespace]
