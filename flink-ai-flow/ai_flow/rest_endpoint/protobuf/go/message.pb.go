@@ -1805,7 +1805,7 @@ type MetricMetaProto struct {
 	MetricType           MetricTypeProto       `protobuf:"varint,9,opt,name=metric_type,json=metricType,proto3,enum=ai_flow.MetricTypeProto" json:"metric_type,omitempty"`
 	Uri                  *wrappers.StringValue `protobuf:"bytes,10,opt,name=uri,proto3" json:"uri,omitempty"`
 	Tags                 *wrappers.StringValue `protobuf:"bytes,11,opt,name=tags,proto3" json:"tags,omitempty"`
-	MetricDescription    *wrappers.StringValue `protobuf:"bytes,12,opt,name=metric_description,json=metricDescription,proto3" json:"metric_description,omitempty"`
+	MetricDescription    *wrappers.StringValue `protobuf:"bytes,12,opt,name=metric_desc,json=metricDescription,proto3" json:"metric_desc,omitempty"`
 	Properties           map[string]string     `protobuf:"bytes,13,rep,name=properties,proto3" json:"properties,omitempty" protobuf_key:"bytes,1,opt,name=key,proto3" protobuf_val:"bytes,2,opt,name=value,proto3"`
 	XXX_NoUnkeyedLiteral struct{}              `json:"-"`
 	XXX_unrecognized     []byte                `json:"-"`
