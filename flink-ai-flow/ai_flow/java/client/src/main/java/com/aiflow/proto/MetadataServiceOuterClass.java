@@ -9821,6 +9821,21 @@ public final class MetadataServiceOuterClass {
      * @return The modelId.
      */
     long getModelId();
+
+    /**
+     * <code>.google.protobuf.StringValue job_name = 3;</code>
+     * @return Whether the jobName field is set.
+     */
+    boolean hasJobName();
+    /**
+     * <code>.google.protobuf.StringValue job_name = 3;</code>
+     * @return The jobName.
+     */
+    com.google.protobuf.StringValue getJobName();
+    /**
+     * <code>.google.protobuf.StringValue job_name = 3;</code>
+     */
+    com.google.protobuf.StringValueOrBuilder getJobNameOrBuilder();
   }
   /**
    * <pre>
@@ -9881,6 +9896,19 @@ public final class MetadataServiceOuterClass {
             case 16: {
 
               modelId_ = input.readInt64();
+              break;
+            }
+            case 26: {
+              com.google.protobuf.StringValue.Builder subBuilder = null;
+              if (jobName_ != null) {
+                subBuilder = jobName_.toBuilder();
+              }
+              jobName_ = input.readMessage(com.google.protobuf.StringValue.parser(), extensionRegistry);
+              if (subBuilder != null) {
+                subBuilder.mergeFrom(jobName_);
+                jobName_ = subBuilder.buildPartial();
+              }
+
               break;
             }
             default: {
@@ -9964,6 +9992,32 @@ public final class MetadataServiceOuterClass {
       return modelId_;
     }
 
+    public static final int JOB_NAME_FIELD_NUMBER = 3;
+    private com.google.protobuf.StringValue jobName_;
+    /**
+     * <code>.google.protobuf.StringValue job_name = 3;</code>
+     * @return Whether the jobName field is set.
+     */
+    @java.lang.Override
+    public boolean hasJobName() {
+      return jobName_ != null;
+    }
+    /**
+     * <code>.google.protobuf.StringValue job_name = 3;</code>
+     * @return The jobName.
+     */
+    @java.lang.Override
+    public com.google.protobuf.StringValue getJobName() {
+      return jobName_ == null ? com.google.protobuf.StringValue.getDefaultInstance() : jobName_;
+    }
+    /**
+     * <code>.google.protobuf.StringValue job_name = 3;</code>
+     */
+    @java.lang.Override
+    public com.google.protobuf.StringValueOrBuilder getJobNameOrBuilder() {
+      return getJobName();
+    }
+
     private byte memoizedIsInitialized = -1;
     @java.lang.Override
     public final boolean isInitialized() {
@@ -9984,6 +10038,9 @@ public final class MetadataServiceOuterClass {
       if (modelId_ != 0L) {
         output.writeInt64(2, modelId_);
       }
+      if (jobName_ != null) {
+        output.writeMessage(3, getJobName());
+      }
       unknownFields.writeTo(output);
     }
 
@@ -9999,6 +10056,10 @@ public final class MetadataServiceOuterClass {
       if (modelId_ != 0L) {
         size += com.google.protobuf.CodedOutputStream
           .computeInt64Size(2, modelId_);
+      }
+      if (jobName_ != null) {
+        size += com.google.protobuf.CodedOutputStream
+          .computeMessageSize(3, getJobName());
       }
       size += unknownFields.getSerializedSize();
       memoizedSize = size;
@@ -10019,6 +10080,11 @@ public final class MetadataServiceOuterClass {
           .equals(other.getName())) return false;
       if (getModelId()
           != other.getModelId()) return false;
+      if (hasJobName() != other.hasJobName()) return false;
+      if (hasJobName()) {
+        if (!getJobName()
+            .equals(other.getJobName())) return false;
+      }
       if (!unknownFields.equals(other.unknownFields)) return false;
       return true;
     }
@@ -10035,6 +10101,10 @@ public final class MetadataServiceOuterClass {
       hash = (37 * hash) + MODEL_ID_FIELD_NUMBER;
       hash = (53 * hash) + com.google.protobuf.Internal.hashLong(
           getModelId());
+      if (hasJobName()) {
+        hash = (37 * hash) + JOB_NAME_FIELD_NUMBER;
+        hash = (53 * hash) + getJobName().hashCode();
+      }
       hash = (29 * hash) + unknownFields.hashCode();
       memoizedHashCode = hash;
       return hash;
@@ -10176,6 +10246,12 @@ public final class MetadataServiceOuterClass {
 
         modelId_ = 0L;
 
+        if (jobNameBuilder_ == null) {
+          jobName_ = null;
+        } else {
+          jobName_ = null;
+          jobNameBuilder_ = null;
+        }
         return this;
       }
 
@@ -10204,6 +10280,11 @@ public final class MetadataServiceOuterClass {
         com.aiflow.proto.MetadataServiceOuterClass.ModelVersionNameRequest result = new com.aiflow.proto.MetadataServiceOuterClass.ModelVersionNameRequest(this);
         result.name_ = name_;
         result.modelId_ = modelId_;
+        if (jobNameBuilder_ == null) {
+          result.jobName_ = jobName_;
+        } else {
+          result.jobName_ = jobNameBuilder_.build();
+        }
         onBuilt();
         return result;
       }
@@ -10258,6 +10339,9 @@ public final class MetadataServiceOuterClass {
         }
         if (other.getModelId() != 0L) {
           setModelId(other.getModelId());
+        }
+        if (other.hasJobName()) {
+          mergeJobName(other.getJobName());
         }
         this.mergeUnknownFields(other.unknownFields);
         onChanged();
@@ -10393,6 +10477,125 @@ public final class MetadataServiceOuterClass {
         modelId_ = 0L;
         onChanged();
         return this;
+      }
+
+      private com.google.protobuf.StringValue jobName_;
+      private com.google.protobuf.SingleFieldBuilderV3<
+          com.google.protobuf.StringValue, com.google.protobuf.StringValue.Builder, com.google.protobuf.StringValueOrBuilder> jobNameBuilder_;
+      /**
+       * <code>.google.protobuf.StringValue job_name = 3;</code>
+       * @return Whether the jobName field is set.
+       */
+      public boolean hasJobName() {
+        return jobNameBuilder_ != null || jobName_ != null;
+      }
+      /**
+       * <code>.google.protobuf.StringValue job_name = 3;</code>
+       * @return The jobName.
+       */
+      public com.google.protobuf.StringValue getJobName() {
+        if (jobNameBuilder_ == null) {
+          return jobName_ == null ? com.google.protobuf.StringValue.getDefaultInstance() : jobName_;
+        } else {
+          return jobNameBuilder_.getMessage();
+        }
+      }
+      /**
+       * <code>.google.protobuf.StringValue job_name = 3;</code>
+       */
+      public Builder setJobName(com.google.protobuf.StringValue value) {
+        if (jobNameBuilder_ == null) {
+          if (value == null) {
+            throw new NullPointerException();
+          }
+          jobName_ = value;
+          onChanged();
+        } else {
+          jobNameBuilder_.setMessage(value);
+        }
+
+        return this;
+      }
+      /**
+       * <code>.google.protobuf.StringValue job_name = 3;</code>
+       */
+      public Builder setJobName(
+          com.google.protobuf.StringValue.Builder builderForValue) {
+        if (jobNameBuilder_ == null) {
+          jobName_ = builderForValue.build();
+          onChanged();
+        } else {
+          jobNameBuilder_.setMessage(builderForValue.build());
+        }
+
+        return this;
+      }
+      /**
+       * <code>.google.protobuf.StringValue job_name = 3;</code>
+       */
+      public Builder mergeJobName(com.google.protobuf.StringValue value) {
+        if (jobNameBuilder_ == null) {
+          if (jobName_ != null) {
+            jobName_ =
+              com.google.protobuf.StringValue.newBuilder(jobName_).mergeFrom(value).buildPartial();
+          } else {
+            jobName_ = value;
+          }
+          onChanged();
+        } else {
+          jobNameBuilder_.mergeFrom(value);
+        }
+
+        return this;
+      }
+      /**
+       * <code>.google.protobuf.StringValue job_name = 3;</code>
+       */
+      public Builder clearJobName() {
+        if (jobNameBuilder_ == null) {
+          jobName_ = null;
+          onChanged();
+        } else {
+          jobName_ = null;
+          jobNameBuilder_ = null;
+        }
+
+        return this;
+      }
+      /**
+       * <code>.google.protobuf.StringValue job_name = 3;</code>
+       */
+      public com.google.protobuf.StringValue.Builder getJobNameBuilder() {
+        
+        onChanged();
+        return getJobNameFieldBuilder().getBuilder();
+      }
+      /**
+       * <code>.google.protobuf.StringValue job_name = 3;</code>
+       */
+      public com.google.protobuf.StringValueOrBuilder getJobNameOrBuilder() {
+        if (jobNameBuilder_ != null) {
+          return jobNameBuilder_.getMessageOrBuilder();
+        } else {
+          return jobName_ == null ?
+              com.google.protobuf.StringValue.getDefaultInstance() : jobName_;
+        }
+      }
+      /**
+       * <code>.google.protobuf.StringValue job_name = 3;</code>
+       */
+      private com.google.protobuf.SingleFieldBuilderV3<
+          com.google.protobuf.StringValue, com.google.protobuf.StringValue.Builder, com.google.protobuf.StringValueOrBuilder> 
+          getJobNameFieldBuilder() {
+        if (jobNameBuilder_ == null) {
+          jobNameBuilder_ = new com.google.protobuf.SingleFieldBuilderV3<
+              com.google.protobuf.StringValue, com.google.protobuf.StringValue.Builder, com.google.protobuf.StringValueOrBuilder>(
+                  getJobName(),
+                  getParentForChildren(),
+                  isClean());
+          jobName_ = null;
+        }
+        return jobNameBuilder_;
       }
       @java.lang.Override
       public final Builder setUnknownFields(
@@ -23424,179 +23627,180 @@ public final class MetadataServiceOuterClass {
       "roto\":\n\024RegisterModelRequest\022\"\n\005model\030\001 " +
       "\001(\0132\023.ai_flow.ModelProto\"N\n\026ModelRelatio" +
       "nListProto\0224\n\017model_relations\030\001 \003(\0132\033.ai" +
-      "_flow.ModelRelationProto\"9\n\027ModelVersion" +
+      "_flow.ModelRelationProto\"i\n\027ModelVersion" +
       "NameRequest\022\014\n\004name\030\001 \001(\t\022\020\n\010model_id\030\002 " +
-      "\001(\003\"i\n#RegisterModelVersionRelationReque" +
-      "st\022B\n\026model_version_relation\030\001 \001(\0132\".ai_" +
-      "flow.ModelVersionRelationProto\"P\n\033Regist" +
-      "erModelVersionRequest\0221\n\rmodel_version\030\001" +
-      " \001(\0132\032.ai_flow.ModelVersionProto\"V\n\037List" +
-      "ModelVersionRelationRequest\022\020\n\010model_id\030" +
-      "\001 \001(\003\022\021\n\tpage_size\030\002 \001(\003\022\016\n\006offset\030\003 \001(\003" +
-      "\"[\n\035ModelVersionRelationListProto\022:\n\016mod" +
-      "el_versions\030\001 \003(\0132\".ai_flow.ModelVersion" +
-      "RelationProto\"K\n\025ModelVersionListProto\0222" +
-      "\n\016model_versions\030\001 \003(\0132\032.ai_flow.ModelVe" +
-      "rsionProto\" \n\020ModelNameRequest\022\014\n\004name\030\001" +
-      " \001(\t\"@\n\026RegisterProjectRequest\022&\n\007projec" +
-      "t\030\001 \001(\0132\025.ai_flow.ProjectProto\"\305\001\n\024Updat" +
-      "eProjectRequest\022\014\n\004name\030\001 \001(\t\022A\n\npropert" +
-      "ies\030\002 \003(\0132-.ai_flow.UpdateProjectRequest" +
-      ".PropertiesEntry\022)\n\003uri\030\003 \001(\0132\034.google.p" +
-      "rotobuf.StringValue\0321\n\017PropertiesEntry\022\013" +
-      "\n\003key\030\001 \001(\t\022\r\n\005value\030\002 \001(\t:\0028\001\";\n\020Projec" +
-      "tListProto\022\'\n\010projects\030\001 \003(\0132\025.ai_flow.P" +
-      "rojectProto\"C\n\027RegisterArtifactRequest\022(" +
-      "\n\010artifact\030\001 \001(\0132\026.ai_flow.ArtifactProto" +
-      "\"\257\002\n\025UpdateArtifactRequest\022\014\n\004name\030\001 \001(\t" +
-      "\022B\n\nproperties\030\002 \003(\0132..ai_flow.UpdateArt" +
-      "ifactRequest.PropertiesEntry\0223\n\rartifact" +
-      "_type\030\003 \001(\0132\034.google.protobuf.StringValu" +
-      "e\022)\n\003uri\030\004 \001(\0132\034.google.protobuf.StringV" +
-      "alue\0221\n\013description\030\005 \001(\0132\034.google.proto" +
-      "buf.StringValue\0321\n\017PropertiesEntry\022\013\n\003ke" +
-      "y\030\001 \001(\t\022\r\n\005value\030\002 \001(\t:\0028\001\">\n\021ArtifactLi" +
-      "stProto\022)\n\tartifacts\030\001 \003(\0132\026.ai_flow.Art" +
-      "ifactProto2\214+\n\017MetadataService\022i\n\016getDat" +
-      "asetById\022\022.ai_flow.IdRequest\032\021.ai_flow.R" +
-      "esponse\"0\202\323\344\223\002*\"%/aiflow/metadata_store/" +
-      "dataset/get/id:\001*\022o\n\020getDatasetByName\022\024." +
-      "ai_flow.NameRequest\032\021.ai_flow.Response\"2" +
-      "\202\323\344\223\002,\"\'/aiflow/metadata_store/dataset/g" +
-      "et/name:\001*\022g\n\014listDatasets\022\024.ai_flow.Lis" +
-      "tRequest\032\021.ai_flow.Response\".\202\323\344\223\002(\"#/ai" +
-      "flow/metadata_store/dataset/list:\001*\022u\n\017r" +
-      "egisterDataset\022\037.ai_flow.RegisterDataset" +
-      "Request\032\021.ai_flow.Response\".\202\323\344\223\002(\"#/aif" +
-      "low/metadata_store/dataset/save:\001*\022\215\001\n\032r" +
-      "egisterDatasetWithCatalog\022\037.ai_flow.Regi" +
-      "sterDatasetRequest\032\021.ai_flow.Response\";\202" +
-      "\323\344\223\0025\"0/aiflow/metadata_store/dataset/sa" +
-      "ve_with_catalog:\001*\022w\n\020registerDatasets\022 " +
-      ".ai_flow.RegisterDatasetsRequest\032\021.ai_fl" +
-      "ow.Response\".\202\323\344\223\002(\"#/aiflow/metadata_st" +
-      "ore/dataset/save:\001*\022s\n\rupdateDataset\022\035.a" +
-      "i_flow.UpdateDatasetRequest\032\021.ai_flow.Re" +
-      "sponse\"0\202\323\344\223\002*\"%/aiflow/metadata_store/d" +
-      "ataset/update:\001*\022o\n\021deleteDatasetById\022\022." +
-      "ai_flow.IdRequest\032\021.ai_flow.Response\"3\202\323" +
-      "\344\223\002-\"(/aiflow/metadata_store/dataset/del" +
-      "ete/id:\001*\022u\n\023deleteDatasetByName\022\024.ai_fl" +
-      "ow.NameRequest\032\021.ai_flow.Response\"5\202\323\344\223\002" +
-      "/\"*/aiflow/metadata_store/dataset/delete" +
-      "/name:\001*\022v\n\024getModelRelationById\022\022.ai_fl" +
-      "ow.IdRequest\032\021.ai_flow.Response\"7\202\323\344\223\0021\"" +
-      ",/aiflow/metadata_store/model_relation/g" +
-      "et/id:\001*\022|\n\026getModelRelationByName\022\024.ai_" +
-      "flow.NameRequest\032\021.ai_flow.Response\"9\202\323\344" +
-      "\223\0023\"./aiflow/metadata_store/model_relati" +
-      "on/get/name:\001*\022s\n\021listModelRelation\022\024.ai" +
-      "_flow.ListRequest\032\021.ai_flow.Response\"5\202\323" +
-      "\344\223\002/\"*/aiflow/metadata_store/model_relat" +
-      "ion/list:\001*\022\210\001\n\025registerModelRelation\022%." +
-      "ai_flow.RegisterModelRelationRequest\032\021.a" +
-      "i_flow.Response\"5\202\323\344\223\002/\"*/aiflow/metadat" +
-      "a_store/model_relation/save:\001*\022|\n\027delete" +
-      "ModelRelationById\022\022.ai_flow.IdRequest\032\021." +
-      "ai_flow.Response\":\202\323\344\223\0024\"//aiflow/metada" +
-      "ta_store/model_relation/delete/id:\001*\022\202\001\n" +
-      "\031deleteModelRelationByName\022\024.ai_flow.Nam" +
-      "eRequest\032\021.ai_flow.Response\"<\202\323\344\223\0026\"1/ai" +
-      "flow/metadata_store/model_relation/delet" +
-      "e/name:\001*\022e\n\014getModelById\022\022.ai_flow.IdRe" +
-      "quest\032\021.ai_flow.Response\".\202\323\344\223\002(\"#/aiflo" +
-      "w/metadata_store/model/get/id:\001*\022k\n\016getM" +
-      "odelByName\022\024.ai_flow.NameRequest\032\021.ai_fl" +
-      "ow.Response\"0\202\323\344\223\002*\"%/aiflow/metadata_st" +
-      "ore/model/get/name:\001*\022o\n\rregisterModel\022\035" +
-      ".ai_flow.RegisterModelRequest\032\021.ai_flow." +
-      "Response\",\202\323\344\223\002&\"!/aiflow/metadata_store" +
-      "/model/save:\001*\022k\n\017deleteModelById\022\022.ai_f" +
-      "low.IdRequest\032\021.ai_flow.Response\"1\202\323\344\223\002+" +
-      "\"&/aiflow/metadata_store/model/delete/id" +
-      ":\001*\022q\n\021deleteModelByName\022\024.ai_flow.NameR" +
-      "equest\032\021.ai_flow.Response\"3\202\323\344\223\002-\"(/aifl" +
-      "ow/metadata_store/model/delete/name:\001*\022\234" +
-      "\001\n getModelVersionRelationByVersion\022 .ai" +
-      "_flow.ModelVersionNameRequest\032\021.ai_flow." +
-      "Response\"C\202\323\344\223\002=\"8/aiflow/metadata_store" +
-      "/modelVersion_relation/get/version:\001*\022\225\001" +
-      "\n\030listModelVersionRelation\022(.ai_flow.Lis" +
-      "tModelVersionRelationRequest\032\021.ai_flow.R" +
-      "esponse\"<\202\323\344\223\0026\"1/aiflow/metadata_store/" +
-      "modelVersion_relation/list:\001*\022\235\001\n\034regist" +
-      "erModelVersionRelation\022,.ai_flow.Registe" +
-      "rModelVersionRelationRequest\032\021.ai_flow.R" +
-      "esponse\"<\202\323\344\223\0026\"1/aiflow/metadata_store/" +
-      "modelVersion_relation/save:\001*\022\242\001\n#delete" +
-      "ModelVersionRelationByVersion\022 .ai_flow." +
-      "ModelVersionNameRequest\032\021.ai_flow.Respon" +
-      "se\"F\202\323\344\223\002@\";/aiflow/metadata_store/model" +
-      "Version_relation/delete/version:\001*\022\213\001\n\030g" +
-      "etModelVersionByVersion\022 .ai_flow.ModelV" +
-      "ersionNameRequest\032\021.ai_flow.Response\":\202\323" +
-      "\344\223\0024\"//aiflow/metadata_store/modelVersio" +
-      "n/get/version:\001*\022\204\001\n\024registerModelVersio" +
-      "n\022$.ai_flow.RegisterModelVersionRequest\032" +
-      "\021.ai_flow.Response\"3\202\323\344\223\002-\"(/aiflow/meta" +
-      "data_store/modelVersion/save:\001*\022\221\001\n\033dele" +
-      "teModelVersionByVersion\022 .ai_flow.ModelV" +
-      "ersionNameRequest\032\021.ai_flow.Response\"=\202\323" +
-      "\344\223\0027\"2/aiflow/metadata_store/modelVersio" +
-      "n/delete/version:\001*\022\213\001\n\027getDeployedModel" +
-      "Version\022\031.ai_flow.ModelNameRequest\032\021.ai_" +
-      "flow.Response\"B\202\323\344\223\002<\"7/aiflow/metadata_" +
-      "store/modelVersion/get_serving_version:\001" +
-      "*\022\241\001\n\036getLatestValidatedModelVersion\022\031.a" +
-      "i_flow.ModelNameRequest\032\021.ai_flow.Respon" +
-      "se\"Q\202\323\344\223\002K\"F/aiflow/metadata_store/model" +
-      "Version/get_latest_validated_model_versi" +
-      "on:\001*\022\241\001\n\036getLatestGeneratedModelVersion" +
-      "\022\031.ai_flow.ModelNameRequest\032\021.ai_flow.Re" +
-      "sponse\"Q\202\323\344\223\002K\"F/aiflow/metadata_store/m" +
-      "odelVersion/get_latest_generated_model_v" +
-      "ersion:\001*\022i\n\016getProjectById\022\022.ai_flow.Id" +
-      "Request\032\021.ai_flow.Response\"0\202\323\344\223\002*\"%/aif" +
-      "low/metadata_store/project/get/id:\001*\022o\n\020" +
-      "getProjectByName\022\024.ai_flow.NameRequest\032\021" +
-      ".ai_flow.Response\"2\202\323\344\223\002,\"\'/aiflow/metad" +
-      "ata_store/project/get/name:\001*\022u\n\017registe" +
-      "rProject\022\037.ai_flow.RegisterProjectReques" +
-      "t\032\021.ai_flow.Response\".\202\323\344\223\002(\"#/aiflow/me" +
-      "tadata_store/project/save:\001*\022s\n\rupdatePr" +
-      "oject\022\035.ai_flow.UpdateProjectRequest\032\021.a" +
+      "\001(\003\022.\n\010job_name\030\003 \001(\0132\034.google.protobuf." +
+      "StringValue\"i\n#RegisterModelVersionRelat" +
+      "ionRequest\022B\n\026model_version_relation\030\001 \001" +
+      "(\0132\".ai_flow.ModelVersionRelationProto\"P" +
+      "\n\033RegisterModelVersionRequest\0221\n\rmodel_v" +
+      "ersion\030\001 \001(\0132\032.ai_flow.ModelVersionProto" +
+      "\"V\n\037ListModelVersionRelationRequest\022\020\n\010m" +
+      "odel_id\030\001 \001(\003\022\021\n\tpage_size\030\002 \001(\003\022\016\n\006offs" +
+      "et\030\003 \001(\003\"[\n\035ModelVersionRelationListProt" +
+      "o\022:\n\016model_versions\030\001 \003(\0132\".ai_flow.Mode" +
+      "lVersionRelationProto\"K\n\025ModelVersionLis" +
+      "tProto\0222\n\016model_versions\030\001 \003(\0132\032.ai_flow" +
+      ".ModelVersionProto\" \n\020ModelNameRequest\022\014" +
+      "\n\004name\030\001 \001(\t\"@\n\026RegisterProjectRequest\022&" +
+      "\n\007project\030\001 \001(\0132\025.ai_flow.ProjectProto\"\305" +
+      "\001\n\024UpdateProjectRequest\022\014\n\004name\030\001 \001(\t\022A\n" +
+      "\nproperties\030\002 \003(\0132-.ai_flow.UpdateProjec" +
+      "tRequest.PropertiesEntry\022)\n\003uri\030\003 \001(\0132\034." +
+      "google.protobuf.StringValue\0321\n\017Propertie" +
+      "sEntry\022\013\n\003key\030\001 \001(\t\022\r\n\005value\030\002 \001(\t:\0028\001\";" +
+      "\n\020ProjectListProto\022\'\n\010projects\030\001 \003(\0132\025.a" +
+      "i_flow.ProjectProto\"C\n\027RegisterArtifactR" +
+      "equest\022(\n\010artifact\030\001 \001(\0132\026.ai_flow.Artif" +
+      "actProto\"\257\002\n\025UpdateArtifactRequest\022\014\n\004na" +
+      "me\030\001 \001(\t\022B\n\nproperties\030\002 \003(\0132..ai_flow.U" +
+      "pdateArtifactRequest.PropertiesEntry\0223\n\r" +
+      "artifact_type\030\003 \001(\0132\034.google.protobuf.St" +
+      "ringValue\022)\n\003uri\030\004 \001(\0132\034.google.protobuf" +
+      ".StringValue\0221\n\013description\030\005 \001(\0132\034.goog" +
+      "le.protobuf.StringValue\0321\n\017PropertiesEnt" +
+      "ry\022\013\n\003key\030\001 \001(\t\022\r\n\005value\030\002 \001(\t:\0028\001\">\n\021Ar" +
+      "tifactListProto\022)\n\tartifacts\030\001 \003(\0132\026.ai_" +
+      "flow.ArtifactProto2\214+\n\017MetadataService\022i" +
+      "\n\016getDatasetById\022\022.ai_flow.IdRequest\032\021.a" +
       "i_flow.Response\"0\202\323\344\223\002*\"%/aiflow/metadat" +
-      "a_store/project/update:\001*\022f\n\013listProject" +
-      "\022\024.ai_flow.ListRequest\032\021.ai_flow.Respons" +
-      "e\".\202\323\344\223\002(\"#/aiflow/metadata_store/projec" +
-      "t/list:\001*\022o\n\021deleteProjectById\022\022.ai_flow" +
-      ".IdRequest\032\021.ai_flow.Response\"3\202\323\344\223\002-\"(/" +
-      "aiflow/metadata_store/project/delete/id:" +
-      "\001*\022u\n\023deleteProjectByName\022\024.ai_flow.Name" +
-      "Request\032\021.ai_flow.Response\"5\202\323\344\223\002/\"*/aif" +
-      "low/metadata_store/project/delete/name:\001" +
-      "*\022k\n\017getArtifactById\022\022.ai_flow.IdRequest" +
-      "\032\021.ai_flow.Response\"1\202\323\344\223\002+\"&/aiflow/met" +
-      "adata_store/artifact/get/id:\001*\022q\n\021getArt" +
-      "ifactByName\022\024.ai_flow.NameRequest\032\021.ai_f" +
-      "low.Response\"3\202\323\344\223\002-\"(/aiflow/metadata_s" +
-      "tore/artifact/get/name:\001*\022v\n\016updateArtif" +
-      "act\022\036.ai_flow.UpdateArtifactRequest\032\021.ai" +
-      "_flow.Response\"1\202\323\344\223\002+\"&/aiflow/metadata" +
-      "_store/artifact/update:\001*\022x\n\020registerArt" +
-      "ifact\022 .ai_flow.RegisterArtifactRequest\032" +
-      "\021.ai_flow.Response\"/\202\323\344\223\002)\"$/aiflow/meta" +
-      "data_store/artifact/save:\001*\022h\n\014listArtif" +
-      "act\022\024.ai_flow.ListRequest\032\021.ai_flow.Resp" +
-      "onse\"/\202\323\344\223\002)\"$/aiflow/metadata_store/art" +
-      "ifact/list:\001*\022q\n\022deleteArtifactById\022\022.ai" +
-      "_flow.IdRequest\032\021.ai_flow.Response\"4\202\323\344\223" +
-      "\002.\")/aiflow/metadata_store/artifact/dele" +
-      "te/id:\001*\022w\n\024deleteArtifactByName\022\024.ai_fl" +
-      "ow.NameRequest\032\021.ai_flow.Response\"6\202\323\344\223\002" +
-      "0\"+/aiflow/metadata_store/artifact/delet" +
-      "e/name:\001*B\"\n\020com.aiflow.protoZ\010/ai_flow\210" +
-      "\001\001\220\001\001b\006proto3"
+      "a_store/dataset/get/id:\001*\022o\n\020getDatasetB" +
+      "yName\022\024.ai_flow.NameRequest\032\021.ai_flow.Re" +
+      "sponse\"2\202\323\344\223\002,\"\'/aiflow/metadata_store/d" +
+      "ataset/get/name:\001*\022g\n\014listDatasets\022\024.ai_" +
+      "flow.ListRequest\032\021.ai_flow.Response\".\202\323\344" +
+      "\223\002(\"#/aiflow/metadata_store/dataset/list" +
+      ":\001*\022u\n\017registerDataset\022\037.ai_flow.Registe" +
+      "rDatasetRequest\032\021.ai_flow.Response\".\202\323\344\223" +
+      "\002(\"#/aiflow/metadata_store/dataset/save:" +
+      "\001*\022\215\001\n\032registerDatasetWithCatalog\022\037.ai_f" +
+      "low.RegisterDatasetRequest\032\021.ai_flow.Res" +
+      "ponse\";\202\323\344\223\0025\"0/aiflow/metadata_store/da" +
+      "taset/save_with_catalog:\001*\022w\n\020registerDa" +
+      "tasets\022 .ai_flow.RegisterDatasetsRequest" +
+      "\032\021.ai_flow.Response\".\202\323\344\223\002(\"#/aiflow/met" +
+      "adata_store/dataset/save:\001*\022s\n\rupdateDat" +
+      "aset\022\035.ai_flow.UpdateDatasetRequest\032\021.ai" +
+      "_flow.Response\"0\202\323\344\223\002*\"%/aiflow/metadata" +
+      "_store/dataset/update:\001*\022o\n\021deleteDatase" +
+      "tById\022\022.ai_flow.IdRequest\032\021.ai_flow.Resp" +
+      "onse\"3\202\323\344\223\002-\"(/aiflow/metadata_store/dat" +
+      "aset/delete/id:\001*\022u\n\023deleteDatasetByName" +
+      "\022\024.ai_flow.NameRequest\032\021.ai_flow.Respons" +
+      "e\"5\202\323\344\223\002/\"*/aiflow/metadata_store/datase" +
+      "t/delete/name:\001*\022v\n\024getModelRelationById" +
+      "\022\022.ai_flow.IdRequest\032\021.ai_flow.Response\"" +
+      "7\202\323\344\223\0021\",/aiflow/metadata_store/model_re" +
+      "lation/get/id:\001*\022|\n\026getModelRelationByNa" +
+      "me\022\024.ai_flow.NameRequest\032\021.ai_flow.Respo" +
+      "nse\"9\202\323\344\223\0023\"./aiflow/metadata_store/mode" +
+      "l_relation/get/name:\001*\022s\n\021listModelRelat" +
+      "ion\022\024.ai_flow.ListRequest\032\021.ai_flow.Resp" +
+      "onse\"5\202\323\344\223\002/\"*/aiflow/metadata_store/mod" +
+      "el_relation/list:\001*\022\210\001\n\025registerModelRel" +
+      "ation\022%.ai_flow.RegisterModelRelationReq" +
+      "uest\032\021.ai_flow.Response\"5\202\323\344\223\002/\"*/aiflow" +
+      "/metadata_store/model_relation/save:\001*\022|" +
+      "\n\027deleteModelRelationById\022\022.ai_flow.IdRe" +
+      "quest\032\021.ai_flow.Response\":\202\323\344\223\0024\"//aiflo" +
+      "w/metadata_store/model_relation/delete/i" +
+      "d:\001*\022\202\001\n\031deleteModelRelationByName\022\024.ai_" +
+      "flow.NameRequest\032\021.ai_flow.Response\"<\202\323\344" +
+      "\223\0026\"1/aiflow/metadata_store/model_relati" +
+      "on/delete/name:\001*\022e\n\014getModelById\022\022.ai_f" +
+      "low.IdRequest\032\021.ai_flow.Response\".\202\323\344\223\002(" +
+      "\"#/aiflow/metadata_store/model/get/id:\001*" +
+      "\022k\n\016getModelByName\022\024.ai_flow.NameRequest" +
+      "\032\021.ai_flow.Response\"0\202\323\344\223\002*\"%/aiflow/met" +
+      "adata_store/model/get/name:\001*\022o\n\rregiste" +
+      "rModel\022\035.ai_flow.RegisterModelRequest\032\021." +
+      "ai_flow.Response\",\202\323\344\223\002&\"!/aiflow/metada" +
+      "ta_store/model/save:\001*\022k\n\017deleteModelByI" +
+      "d\022\022.ai_flow.IdRequest\032\021.ai_flow.Response" +
+      "\"1\202\323\344\223\002+\"&/aiflow/metadata_store/model/d" +
+      "elete/id:\001*\022q\n\021deleteModelByName\022\024.ai_fl" +
+      "ow.NameRequest\032\021.ai_flow.Response\"3\202\323\344\223\002" +
+      "-\"(/aiflow/metadata_store/model/delete/n" +
+      "ame:\001*\022\234\001\n getModelVersionRelationByVers" +
+      "ion\022 .ai_flow.ModelVersionNameRequest\032\021." +
+      "ai_flow.Response\"C\202\323\344\223\002=\"8/aiflow/metada" +
+      "ta_store/modelVersion_relation/get/versi" +
+      "on:\001*\022\225\001\n\030listModelVersionRelation\022(.ai_" +
+      "flow.ListModelVersionRelationRequest\032\021.a" +
+      "i_flow.Response\"<\202\323\344\223\0026\"1/aiflow/metadat" +
+      "a_store/modelVersion_relation/list:\001*\022\235\001" +
+      "\n\034registerModelVersionRelation\022,.ai_flow" +
+      ".RegisterModelVersionRelationRequest\032\021.a" +
+      "i_flow.Response\"<\202\323\344\223\0026\"1/aiflow/metadat" +
+      "a_store/modelVersion_relation/save:\001*\022\242\001" +
+      "\n#deleteModelVersionRelationByVersion\022 ." +
+      "ai_flow.ModelVersionNameRequest\032\021.ai_flo" +
+      "w.Response\"F\202\323\344\223\002@\";/aiflow/metadata_sto" +
+      "re/modelVersion_relation/delete/version:" +
+      "\001*\022\213\001\n\030getModelVersionByVersion\022 .ai_flo" +
+      "w.ModelVersionNameRequest\032\021.ai_flow.Resp" +
+      "onse\":\202\323\344\223\0024\"//aiflow/metadata_store/mod" +
+      "elVersion/get/version:\001*\022\204\001\n\024registerMod" +
+      "elVersion\022$.ai_flow.RegisterModelVersion" +
+      "Request\032\021.ai_flow.Response\"3\202\323\344\223\002-\"(/aif" +
+      "low/metadata_store/modelVersion/save:\001*\022" +
+      "\221\001\n\033deleteModelVersionByVersion\022 .ai_flo" +
+      "w.ModelVersionNameRequest\032\021.ai_flow.Resp" +
+      "onse\"=\202\323\344\223\0027\"2/aiflow/metadata_store/mod" +
+      "elVersion/delete/version:\001*\022\213\001\n\027getDeplo" +
+      "yedModelVersion\022\031.ai_flow.ModelNameReque" +
+      "st\032\021.ai_flow.Response\"B\202\323\344\223\002<\"7/aiflow/m" +
+      "etadata_store/modelVersion/get_serving_v" +
+      "ersion:\001*\022\241\001\n\036getLatestValidatedModelVer" +
+      "sion\022\031.ai_flow.ModelNameRequest\032\021.ai_flo" +
+      "w.Response\"Q\202\323\344\223\002K\"F/aiflow/metadata_sto" +
+      "re/modelVersion/get_latest_validated_mod" +
+      "el_version:\001*\022\241\001\n\036getLatestGeneratedMode" +
+      "lVersion\022\031.ai_flow.ModelNameRequest\032\021.ai" +
+      "_flow.Response\"Q\202\323\344\223\002K\"F/aiflow/metadata" +
+      "_store/modelVersion/get_latest_generated" +
+      "_model_version:\001*\022i\n\016getProjectById\022\022.ai" +
+      "_flow.IdRequest\032\021.ai_flow.Response\"0\202\323\344\223" +
+      "\002*\"%/aiflow/metadata_store/project/get/i" +
+      "d:\001*\022o\n\020getProjectByName\022\024.ai_flow.NameR" +
+      "equest\032\021.ai_flow.Response\"2\202\323\344\223\002,\"\'/aifl" +
+      "ow/metadata_store/project/get/name:\001*\022u\n" +
+      "\017registerProject\022\037.ai_flow.RegisterProje" +
+      "ctRequest\032\021.ai_flow.Response\".\202\323\344\223\002(\"#/a" +
+      "iflow/metadata_store/project/save:\001*\022s\n\r" +
+      "updateProject\022\035.ai_flow.UpdateProjectReq" +
+      "uest\032\021.ai_flow.Response\"0\202\323\344\223\002*\"%/aiflow" +
+      "/metadata_store/project/update:\001*\022f\n\013lis" +
+      "tProject\022\024.ai_flow.ListRequest\032\021.ai_flow" +
+      ".Response\".\202\323\344\223\002(\"#/aiflow/metadata_stor" +
+      "e/project/list:\001*\022o\n\021deleteProjectById\022\022" +
+      ".ai_flow.IdRequest\032\021.ai_flow.Response\"3\202" +
+      "\323\344\223\002-\"(/aiflow/metadata_store/project/de" +
+      "lete/id:\001*\022u\n\023deleteProjectByName\022\024.ai_f" +
+      "low.NameRequest\032\021.ai_flow.Response\"5\202\323\344\223" +
+      "\002/\"*/aiflow/metadata_store/project/delet" +
+      "e/name:\001*\022k\n\017getArtifactById\022\022.ai_flow.I" +
+      "dRequest\032\021.ai_flow.Response\"1\202\323\344\223\002+\"&/ai" +
+      "flow/metadata_store/artifact/get/id:\001*\022q" +
+      "\n\021getArtifactByName\022\024.ai_flow.NameReques" +
+      "t\032\021.ai_flow.Response\"3\202\323\344\223\002-\"(/aiflow/me" +
+      "tadata_store/artifact/get/name:\001*\022v\n\016upd" +
+      "ateArtifact\022\036.ai_flow.UpdateArtifactRequ" +
+      "est\032\021.ai_flow.Response\"1\202\323\344\223\002+\"&/aiflow/" +
+      "metadata_store/artifact/update:\001*\022x\n\020reg" +
+      "isterArtifact\022 .ai_flow.RegisterArtifact" +
+      "Request\032\021.ai_flow.Response\"/\202\323\344\223\002)\"$/aif" +
+      "low/metadata_store/artifact/save:\001*\022h\n\014l" +
+      "istArtifact\022\024.ai_flow.ListRequest\032\021.ai_f" +
+      "low.Response\"/\202\323\344\223\002)\"$/aiflow/metadata_s" +
+      "tore/artifact/list:\001*\022q\n\022deleteArtifactB" +
+      "yId\022\022.ai_flow.IdRequest\032\021.ai_flow.Respon" +
+      "se\"4\202\323\344\223\002.\")/aiflow/metadata_store/artif" +
+      "act/delete/id:\001*\022w\n\024deleteArtifactByName" +
+      "\022\024.ai_flow.NameRequest\032\021.ai_flow.Respons" +
+      "e\"6\202\323\344\223\0020\"+/aiflow/metadata_store/artifa" +
+      "ct/delete/name:\001*B\"\n\020com.aiflow.protoZ\010/" +
+      "ai_flow\210\001\001\220\001\001b\006proto3"
     };
     descriptor = com.google.protobuf.Descriptors.FileDescriptor
       .internalBuildGeneratedFileFrom(descriptorData,
@@ -23682,7 +23886,7 @@ public final class MetadataServiceOuterClass {
     internal_static_ai_flow_ModelVersionNameRequest_fieldAccessorTable = new
       com.google.protobuf.GeneratedMessageV3.FieldAccessorTable(
         internal_static_ai_flow_ModelVersionNameRequest_descriptor,
-        new java.lang.String[] { "Name", "ModelId", });
+        new java.lang.String[] { "Name", "ModelId", "JobName", });
     internal_static_ai_flow_RegisterModelVersionRelationRequest_descriptor =
       getDescriptor().getMessageTypes().get(12);
     internal_static_ai_flow_RegisterModelVersionRelationRequest_fieldAccessorTable = new

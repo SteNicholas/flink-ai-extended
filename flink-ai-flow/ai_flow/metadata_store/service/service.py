@@ -260,7 +260,10 @@ class MetadataService(metadata_service_pb2_grpc.MetadataServiceServicer):
                                                                              model_version.model_path,
                                                                              model_version.model_type,
                                                                              model_version.version_desc,
-                                                                             request.model_version.current_stage)
+                                                                             request.model_version.current_stage,
+                                                                             request.model_version.job_name.value
+                                                                                if request.model_version.HasField(
+                                                                                    'job_name') else None)
         model_version_relation = self.store.register_model_version_relation(version=model_version_detail.model_version,
                                                                             model_id=model_version.model_id,
                                                                             project_snapshot_id=
@@ -277,7 +280,9 @@ class MetadataService(metadata_service_pb2_grpc.MetadataServiceServicer):
             model_version__status = self.store.delete_model_version_relation_by_version(request.name, request.model_id)
             model_relation = self.store.get_model_relation_by_id(model_version_relation.model_id)
             if model_relation is not None:
-                self.model_center_client.delete_model_version(model_relation.name, request.name)
+                self.model_center_client.delete_model_version(model_relation.name, request.name,
+                                                              request.job_name.value if request.HasField(
+                                                                  'job_name') else None)
             return _wrap_delete_response(model_version__status)
 
     @catch_exception

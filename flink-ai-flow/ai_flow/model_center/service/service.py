@@ -50,9 +50,11 @@ class ModelCenterService(model_center_service_pb2_grpc.ModelCenterServiceService
         else:
             self.model_repo_store = SqlAlchemyStore(store_uri)
         if notification_uri is None:
-            self.notification_client = NotificationClient(server_uri, default_namespace=DEFAULT_NAMESPACE)
+            self.notification_client = NotificationClient(server_uri, default_namespace=DEFAULT_NAMESPACE,
+                                                          sender="model_center")
         else:
-            self.notification_client = NotificationClient(notification_uri, default_namespace=DEFAULT_NAMESPACE)
+            self.notification_client = NotificationClient(notification_uri, default_namespace=DEFAULT_NAMESPACE,
+                                                          sender="model_center")
 
     @catch_exception
     def createRegisteredModel(self, request, context):
@@ -100,9 +102,10 @@ class ModelCenterService(model_center_service_pb2_grpc.ModelCenterServiceService
                                                                         model_version_param.version_desc,
                                                                         model_version_param.current_stage)
         event_type = MODEL_VERSION_TO_EVENT_TYPE.get(ModelVersionStage.from_string(model_version_param.current_stage))
-        self.notification_client.send_event(BaseEvent(model_version_meta.model_name,
-                                                      json.dumps(model_version_meta.__dict__),
-                                                      event_type))
+        self.notification_client.send_event(BaseEvent(key=model_version_meta.model_name,
+                                                      value=json.dumps(model_version_meta.__dict__),
+                                                      event_type=event_type,
+                                                      context=model_meta_param.job_name))
         return _wrap_response(model_version_meta.to_meta_proto())
 
     @catch_exception
@@ -115,19 +118,22 @@ class ModelCenterService(model_center_service_pb2_grpc.ModelCenterServiceService
                                                                         model_version_param.version_desc,
                                                                         model_version_param.current_stage)
         if model_version_param.current_stage is not None:
-            event_type = MODEL_VERSION_TO_EVENT_TYPE.get(ModelVersionStage.from_string(model_version_param.current_stage))
-            self.notification_client.send_event(BaseEvent(model_version_meta.model_name,
-                                                          json.dumps(model_version_meta.__dict__),
-                                                          event_type))
+            event_type = MODEL_VERSION_TO_EVENT_TYPE.get(
+                ModelVersionStage.from_string(model_version_param.current_stage))
+            self.notification_client.send_event(BaseEvent(key=model_version_meta.model_name,
+                                                          value=json.dumps(model_version_meta.__dict__),
+                                                          event_type=event_type,
+                                                          context=model_meta_param.job_name))
         return _wrap_response(None if model_version_meta is None else model_version_meta.to_meta_proto())
 
     @catch_exception
     def deleteModelVersion(self, request, context):
         model_meta_param = ModelVersion.from_proto(request)
         self.model_repo_store.delete_model_version(model_meta_param)
-        self.notification_client.send_event(BaseEvent(model_meta_param.model_name,
-                                                      json.dumps(model_meta_param.__dict__),
-                                                      ModelVersionEventType.MODEL_DELETED))
+        self.notification_client.send_event(BaseEvent(key=model_meta_param.model_name,
+                                                      value=json.dumps(model_meta_param.__dict__),
+                                                      event_type=ModelVersionEventType.MODEL_DELETED,
+                                                      context=model_meta_param.job_name))
         return _wrap_response(request.model_meta)
 
     @catch_exception

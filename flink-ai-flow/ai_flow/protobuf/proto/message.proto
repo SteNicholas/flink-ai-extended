@@ -75,6 +75,7 @@ message ModelVersionProto {
     google.protobuf.StringValue model_type = 6;
     google.protobuf.StringValue version_desc = 7;
     ModelVersionStage current_stage = 8;
+    google.protobuf.StringValue job_name = 9;
 }
 
 message JobProto {
@@ -147,6 +148,7 @@ message ModelVersionParam {
 message ModelMetaParam {
     google.protobuf.StringValue model_name = 1;
     google.protobuf.StringValue model_version = 2;
+    google.protobuf.StringValue job_name = 3;
 }
 
 message Response {

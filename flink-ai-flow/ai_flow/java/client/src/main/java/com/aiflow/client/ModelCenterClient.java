@@ -142,11 +142,12 @@ public class ModelCenterClient {
      * @param modelPath   Source path where the AIFlow model is stored.
      * @param modelType (Optional) Type of AIFlow registered model option.
      * @param versionDesc (Optional) Description of registered model version.
+     * @param jobName (Optional) Name of the job that registers model version.
      * @return Object of ModelVersion created in Model Center.
      */
-    public ModelVersion createModelVersion(String modelName, String modelPath, String modelType, String versionDesc) throws Exception {
+    public ModelVersion createModelVersion(String modelName, String modelPath, String modelType, String versionDesc, String jobName) throws Exception {
         CreateModelVersionRequest request = CreateModelVersionRequest.newBuilder()
-                .setModelMeta(ModelMetaParam.newBuilder().setModelName(stringValue(modelName)))
+                .setModelMeta(ModelMetaParam.newBuilder().setModelName(stringValue(modelName)).setJobName(stringValue(jobName)))
                 .setModelVersion(ModelVersionParam.newBuilder().setModelPath(stringValue(modelPath))
                         .setModelType(stringValue(modelType)).setVersionDesc(stringValue(versionDesc))
                         .setCurrentStage(ModelStage.GENERATED.getModelStage())).build();
@@ -166,16 +167,17 @@ public class ModelCenterClient {
      * @param modelType    (Optional) Type of AIFlow registered model option.
      * @param versionDesc  (Optional) Description of registered model version.
      * @param currentStage (Optional) Current stage for registered model version.
+     * @param jobName (Optional) Name of the job that updates model version.
      * @return Object of ModelVersion updated in Model Center.
      */
-    public ModelVersion updateModelVersion(String modelName, String modelVersion, String modelPath, String modelType, String versionDesc, ModelStage currentStage) throws Exception {
+    public ModelVersion updateModelVersion(String modelName, String modelVersion, String modelPath, String modelType, String versionDesc, ModelStage currentStage, String jobName) throws Exception {
         ModelVersionParam.Builder param = ModelVersionParam.newBuilder().setModelPath(stringValue(modelPath))
                 .setModelType(stringValue(modelType)).setVersionDesc(stringValue(versionDesc));
         if (currentStage != null) {
             param.setCurrentStage(currentStage.getModelStage());
         }
         UpdateModelVersionRequest request = UpdateModelVersionRequest.newBuilder()
-                .setModelMeta(ModelMetaParam.newBuilder().setModelName(stringValue(modelName)).setModelVersion(stringValue(modelVersion)))
+                .setModelMeta(ModelMetaParam.newBuilder().setModelName(stringValue(modelName)).setModelVersion(stringValue(modelVersion)).setJobName(stringValue(jobName)))
                 .setModelVersion(param).build();
         Response response = this.modelCenterServiceStub.updateModelVersion(request);
         ModelVersionMeta.Builder builder = ModelVersionMeta.newBuilder();
@@ -187,11 +189,12 @@ public class ModelCenterClient {
      *
      * @param modelName    Name of registered model. This is expected to be unique in the backend store.
      * @param modelVersion User-defined version of registered model.
+     * @param jobName (Optional) Name of the job that deletes model version.
      * @return Object of ModelVersion deleted in Model Center.
      */
-    public ModelVersion deleteModelVersion(String modelName, String modelVersion) throws Exception {
+    public ModelVersion deleteModelVersion(String modelName, String modelVersion, String jobName) throws Exception {
         DeleteModelVersionRequest request = DeleteModelVersionRequest.newBuilder()
-                .setModelMeta(ModelMetaParam.newBuilder().setModelName(stringValue(modelName)).setModelVersion(stringValue(modelVersion))).build();
+                .setModelMeta(ModelMetaParam.newBuilder().setModelName(stringValue(modelName)).setModelVersion(stringValue(modelVersion)).setJobName(stringValue(jobName))).build();
         Response response = this.modelCenterServiceStub.deleteModelVersion(request);
         ModelMetaParam.Builder builder = ModelMetaParam.newBuilder();
         return StringUtils.isEmpty(buildResponse(response, this.parser, builder)) ? null : buildModelVersion(builder.build());

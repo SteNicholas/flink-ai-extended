@@ -8576,6 +8576,21 @@ public final class Message {
      * @return The currentStage.
      */
     com.aiflow.proto.Message.ModelVersionStage getCurrentStage();
+
+    /**
+     * <code>.google.protobuf.StringValue job_name = 9;</code>
+     * @return Whether the jobName field is set.
+     */
+    boolean hasJobName();
+    /**
+     * <code>.google.protobuf.StringValue job_name = 9;</code>
+     * @return The jobName.
+     */
+    com.google.protobuf.StringValue getJobName();
+    /**
+     * <code>.google.protobuf.StringValue job_name = 9;</code>
+     */
+    com.google.protobuf.StringValueOrBuilder getJobNameOrBuilder();
   }
   /**
    * Protobuf type {@code ai_flow.ModelVersionProto}
@@ -8705,6 +8720,19 @@ public final class Message {
               int rawValue = input.readEnum();
 
               currentStage_ = rawValue;
+              break;
+            }
+            case 74: {
+              com.google.protobuf.StringValue.Builder subBuilder = null;
+              if (jobName_ != null) {
+                subBuilder = jobName_.toBuilder();
+              }
+              jobName_ = input.readMessage(com.google.protobuf.StringValue.parser(), extensionRegistry);
+              if (subBuilder != null) {
+                subBuilder.mergeFrom(jobName_);
+                jobName_ = subBuilder.buildPartial();
+              }
+
               break;
             }
             default: {
@@ -8914,6 +8942,32 @@ public final class Message {
       return result == null ? com.aiflow.proto.Message.ModelVersionStage.UNRECOGNIZED : result;
     }
 
+    public static final int JOB_NAME_FIELD_NUMBER = 9;
+    private com.google.protobuf.StringValue jobName_;
+    /**
+     * <code>.google.protobuf.StringValue job_name = 9;</code>
+     * @return Whether the jobName field is set.
+     */
+    @java.lang.Override
+    public boolean hasJobName() {
+      return jobName_ != null;
+    }
+    /**
+     * <code>.google.protobuf.StringValue job_name = 9;</code>
+     * @return The jobName.
+     */
+    @java.lang.Override
+    public com.google.protobuf.StringValue getJobName() {
+      return jobName_ == null ? com.google.protobuf.StringValue.getDefaultInstance() : jobName_;
+    }
+    /**
+     * <code>.google.protobuf.StringValue job_name = 9;</code>
+     */
+    @java.lang.Override
+    public com.google.protobuf.StringValueOrBuilder getJobNameOrBuilder() {
+      return getJobName();
+    }
+
     private byte memoizedIsInitialized = -1;
     @java.lang.Override
     public final boolean isInitialized() {
@@ -8948,6 +9002,9 @@ public final class Message {
       }
       if (currentStage_ != com.aiflow.proto.Message.ModelVersionStage.GENERATED.getNumber()) {
         output.writeEnum(8, currentStage_);
+      }
+      if (jobName_ != null) {
+        output.writeMessage(9, getJobName());
       }
       unknownFields.writeTo(output);
     }
@@ -8985,6 +9042,10 @@ public final class Message {
       if (currentStage_ != com.aiflow.proto.Message.ModelVersionStage.GENERATED.getNumber()) {
         size += com.google.protobuf.CodedOutputStream
           .computeEnumSize(8, currentStage_);
+      }
+      if (jobName_ != null) {
+        size += com.google.protobuf.CodedOutputStream
+          .computeMessageSize(9, getJobName());
       }
       size += unknownFields.getSerializedSize();
       memoizedSize = size;
@@ -9032,6 +9093,11 @@ public final class Message {
             .equals(other.getVersionDesc())) return false;
       }
       if (currentStage_ != other.currentStage_) return false;
+      if (hasJobName() != other.hasJobName()) return false;
+      if (hasJobName()) {
+        if (!getJobName()
+            .equals(other.getJobName())) return false;
+      }
       if (!unknownFields.equals(other.unknownFields)) return false;
       return true;
     }
@@ -9069,6 +9135,10 @@ public final class Message {
       }
       hash = (37 * hash) + CURRENT_STAGE_FIELD_NUMBER;
       hash = (53 * hash) + currentStage_;
+      if (hasJobName()) {
+        hash = (37 * hash) + JOB_NAME_FIELD_NUMBER;
+        hash = (53 * hash) + getJobName().hashCode();
+      }
       hash = (29 * hash) + unknownFields.hashCode();
       memoizedHashCode = hash;
       return hash;
@@ -9240,6 +9310,12 @@ public final class Message {
         }
         currentStage_ = 0;
 
+        if (jobNameBuilder_ == null) {
+          jobName_ = null;
+        } else {
+          jobName_ = null;
+          jobNameBuilder_ = null;
+        }
         return this;
       }
 
@@ -9297,6 +9373,11 @@ public final class Message {
           result.versionDesc_ = versionDescBuilder_.build();
         }
         result.currentStage_ = currentStage_;
+        if (jobNameBuilder_ == null) {
+          result.jobName_ = jobName_;
+        } else {
+          result.jobName_ = jobNameBuilder_.build();
+        }
         onBuilt();
         return result;
       }
@@ -9365,6 +9446,9 @@ public final class Message {
         }
         if (other.currentStage_ != 0) {
           setCurrentStageValue(other.getCurrentStageValue());
+        }
+        if (other.hasJobName()) {
+          mergeJobName(other.getJobName());
         }
         this.mergeUnknownFields(other.unknownFields);
         onChanged();
@@ -10161,6 +10245,125 @@ public final class Message {
         currentStage_ = 0;
         onChanged();
         return this;
+      }
+
+      private com.google.protobuf.StringValue jobName_;
+      private com.google.protobuf.SingleFieldBuilderV3<
+          com.google.protobuf.StringValue, com.google.protobuf.StringValue.Builder, com.google.protobuf.StringValueOrBuilder> jobNameBuilder_;
+      /**
+       * <code>.google.protobuf.StringValue job_name = 9;</code>
+       * @return Whether the jobName field is set.
+       */
+      public boolean hasJobName() {
+        return jobNameBuilder_ != null || jobName_ != null;
+      }
+      /**
+       * <code>.google.protobuf.StringValue job_name = 9;</code>
+       * @return The jobName.
+       */
+      public com.google.protobuf.StringValue getJobName() {
+        if (jobNameBuilder_ == null) {
+          return jobName_ == null ? com.google.protobuf.StringValue.getDefaultInstance() : jobName_;
+        } else {
+          return jobNameBuilder_.getMessage();
+        }
+      }
+      /**
+       * <code>.google.protobuf.StringValue job_name = 9;</code>
+       */
+      public Builder setJobName(com.google.protobuf.StringValue value) {
+        if (jobNameBuilder_ == null) {
+          if (value == null) {
+            throw new NullPointerException();
+          }
+          jobName_ = value;
+          onChanged();
+        } else {
+          jobNameBuilder_.setMessage(value);
+        }
+
+        return this;
+      }
+      /**
+       * <code>.google.protobuf.StringValue job_name = 9;</code>
+       */
+      public Builder setJobName(
+          com.google.protobuf.StringValue.Builder builderForValue) {
+        if (jobNameBuilder_ == null) {
+          jobName_ = builderForValue.build();
+          onChanged();
+        } else {
+          jobNameBuilder_.setMessage(builderForValue.build());
+        }
+
+        return this;
+      }
+      /**
+       * <code>.google.protobuf.StringValue job_name = 9;</code>
+       */
+      public Builder mergeJobName(com.google.protobuf.StringValue value) {
+        if (jobNameBuilder_ == null) {
+          if (jobName_ != null) {
+            jobName_ =
+              com.google.protobuf.StringValue.newBuilder(jobName_).mergeFrom(value).buildPartial();
+          } else {
+            jobName_ = value;
+          }
+          onChanged();
+        } else {
+          jobNameBuilder_.mergeFrom(value);
+        }
+
+        return this;
+      }
+      /**
+       * <code>.google.protobuf.StringValue job_name = 9;</code>
+       */
+      public Builder clearJobName() {
+        if (jobNameBuilder_ == null) {
+          jobName_ = null;
+          onChanged();
+        } else {
+          jobName_ = null;
+          jobNameBuilder_ = null;
+        }
+
+        return this;
+      }
+      /**
+       * <code>.google.protobuf.StringValue job_name = 9;</code>
+       */
+      public com.google.protobuf.StringValue.Builder getJobNameBuilder() {
+        
+        onChanged();
+        return getJobNameFieldBuilder().getBuilder();
+      }
+      /**
+       * <code>.google.protobuf.StringValue job_name = 9;</code>
+       */
+      public com.google.protobuf.StringValueOrBuilder getJobNameOrBuilder() {
+        if (jobNameBuilder_ != null) {
+          return jobNameBuilder_.getMessageOrBuilder();
+        } else {
+          return jobName_ == null ?
+              com.google.protobuf.StringValue.getDefaultInstance() : jobName_;
+        }
+      }
+      /**
+       * <code>.google.protobuf.StringValue job_name = 9;</code>
+       */
+      private com.google.protobuf.SingleFieldBuilderV3<
+          com.google.protobuf.StringValue, com.google.protobuf.StringValue.Builder, com.google.protobuf.StringValueOrBuilder> 
+          getJobNameFieldBuilder() {
+        if (jobNameBuilder_ == null) {
+          jobNameBuilder_ = new com.google.protobuf.SingleFieldBuilderV3<
+              com.google.protobuf.StringValue, com.google.protobuf.StringValue.Builder, com.google.protobuf.StringValueOrBuilder>(
+                  getJobName(),
+                  getParentForChildren(),
+                  isClean());
+          jobName_ = null;
+        }
+        return jobNameBuilder_;
       }
       @java.lang.Override
       public final Builder setUnknownFields(
@@ -21778,6 +21981,21 @@ public final class Message {
      * <code>.google.protobuf.StringValue model_version = 2;</code>
      */
     com.google.protobuf.StringValueOrBuilder getModelVersionOrBuilder();
+
+    /**
+     * <code>.google.protobuf.StringValue job_name = 3;</code>
+     * @return Whether the jobName field is set.
+     */
+    boolean hasJobName();
+    /**
+     * <code>.google.protobuf.StringValue job_name = 3;</code>
+     * @return The jobName.
+     */
+    com.google.protobuf.StringValue getJobName();
+    /**
+     * <code>.google.protobuf.StringValue job_name = 3;</code>
+     */
+    com.google.protobuf.StringValueOrBuilder getJobNameOrBuilder();
   }
   /**
    * Protobuf type {@code ai_flow.ModelMetaParam}
@@ -21846,6 +22064,19 @@ public final class Message {
               if (subBuilder != null) {
                 subBuilder.mergeFrom(modelVersion_);
                 modelVersion_ = subBuilder.buildPartial();
+              }
+
+              break;
+            }
+            case 26: {
+              com.google.protobuf.StringValue.Builder subBuilder = null;
+              if (jobName_ != null) {
+                subBuilder = jobName_.toBuilder();
+              }
+              jobName_ = input.readMessage(com.google.protobuf.StringValue.parser(), extensionRegistry);
+              if (subBuilder != null) {
+                subBuilder.mergeFrom(jobName_);
+                jobName_ = subBuilder.buildPartial();
               }
 
               break;
@@ -21934,6 +22165,32 @@ public final class Message {
       return getModelVersion();
     }
 
+    public static final int JOB_NAME_FIELD_NUMBER = 3;
+    private com.google.protobuf.StringValue jobName_;
+    /**
+     * <code>.google.protobuf.StringValue job_name = 3;</code>
+     * @return Whether the jobName field is set.
+     */
+    @java.lang.Override
+    public boolean hasJobName() {
+      return jobName_ != null;
+    }
+    /**
+     * <code>.google.protobuf.StringValue job_name = 3;</code>
+     * @return The jobName.
+     */
+    @java.lang.Override
+    public com.google.protobuf.StringValue getJobName() {
+      return jobName_ == null ? com.google.protobuf.StringValue.getDefaultInstance() : jobName_;
+    }
+    /**
+     * <code>.google.protobuf.StringValue job_name = 3;</code>
+     */
+    @java.lang.Override
+    public com.google.protobuf.StringValueOrBuilder getJobNameOrBuilder() {
+      return getJobName();
+    }
+
     private byte memoizedIsInitialized = -1;
     @java.lang.Override
     public final boolean isInitialized() {
@@ -21954,6 +22211,9 @@ public final class Message {
       if (modelVersion_ != null) {
         output.writeMessage(2, getModelVersion());
       }
+      if (jobName_ != null) {
+        output.writeMessage(3, getJobName());
+      }
       unknownFields.writeTo(output);
     }
 
@@ -21970,6 +22230,10 @@ public final class Message {
       if (modelVersion_ != null) {
         size += com.google.protobuf.CodedOutputStream
           .computeMessageSize(2, getModelVersion());
+      }
+      if (jobName_ != null) {
+        size += com.google.protobuf.CodedOutputStream
+          .computeMessageSize(3, getJobName());
       }
       size += unknownFields.getSerializedSize();
       memoizedSize = size;
@@ -21996,6 +22260,11 @@ public final class Message {
         if (!getModelVersion()
             .equals(other.getModelVersion())) return false;
       }
+      if (hasJobName() != other.hasJobName()) return false;
+      if (hasJobName()) {
+        if (!getJobName()
+            .equals(other.getJobName())) return false;
+      }
       if (!unknownFields.equals(other.unknownFields)) return false;
       return true;
     }
@@ -22014,6 +22283,10 @@ public final class Message {
       if (hasModelVersion()) {
         hash = (37 * hash) + MODEL_VERSION_FIELD_NUMBER;
         hash = (53 * hash) + getModelVersion().hashCode();
+      }
+      if (hasJobName()) {
+        hash = (37 * hash) + JOB_NAME_FIELD_NUMBER;
+        hash = (53 * hash) + getJobName().hashCode();
       }
       hash = (29 * hash) + unknownFields.hashCode();
       memoizedHashCode = hash;
@@ -22160,6 +22433,12 @@ public final class Message {
           modelVersion_ = null;
           modelVersionBuilder_ = null;
         }
+        if (jobNameBuilder_ == null) {
+          jobName_ = null;
+        } else {
+          jobName_ = null;
+          jobNameBuilder_ = null;
+        }
         return this;
       }
 
@@ -22195,6 +22474,11 @@ public final class Message {
           result.modelVersion_ = modelVersion_;
         } else {
           result.modelVersion_ = modelVersionBuilder_.build();
+        }
+        if (jobNameBuilder_ == null) {
+          result.jobName_ = jobName_;
+        } else {
+          result.jobName_ = jobNameBuilder_.build();
         }
         onBuilt();
         return result;
@@ -22249,6 +22533,9 @@ public final class Message {
         }
         if (other.hasModelVersion()) {
           mergeModelVersion(other.getModelVersion());
+        }
+        if (other.hasJobName()) {
+          mergeJobName(other.getJobName());
         }
         this.mergeUnknownFields(other.unknownFields);
         onChanged();
@@ -22515,6 +22802,125 @@ public final class Message {
           modelVersion_ = null;
         }
         return modelVersionBuilder_;
+      }
+
+      private com.google.protobuf.StringValue jobName_;
+      private com.google.protobuf.SingleFieldBuilderV3<
+          com.google.protobuf.StringValue, com.google.protobuf.StringValue.Builder, com.google.protobuf.StringValueOrBuilder> jobNameBuilder_;
+      /**
+       * <code>.google.protobuf.StringValue job_name = 3;</code>
+       * @return Whether the jobName field is set.
+       */
+      public boolean hasJobName() {
+        return jobNameBuilder_ != null || jobName_ != null;
+      }
+      /**
+       * <code>.google.protobuf.StringValue job_name = 3;</code>
+       * @return The jobName.
+       */
+      public com.google.protobuf.StringValue getJobName() {
+        if (jobNameBuilder_ == null) {
+          return jobName_ == null ? com.google.protobuf.StringValue.getDefaultInstance() : jobName_;
+        } else {
+          return jobNameBuilder_.getMessage();
+        }
+      }
+      /**
+       * <code>.google.protobuf.StringValue job_name = 3;</code>
+       */
+      public Builder setJobName(com.google.protobuf.StringValue value) {
+        if (jobNameBuilder_ == null) {
+          if (value == null) {
+            throw new NullPointerException();
+          }
+          jobName_ = value;
+          onChanged();
+        } else {
+          jobNameBuilder_.setMessage(value);
+        }
+
+        return this;
+      }
+      /**
+       * <code>.google.protobuf.StringValue job_name = 3;</code>
+       */
+      public Builder setJobName(
+          com.google.protobuf.StringValue.Builder builderForValue) {
+        if (jobNameBuilder_ == null) {
+          jobName_ = builderForValue.build();
+          onChanged();
+        } else {
+          jobNameBuilder_.setMessage(builderForValue.build());
+        }
+
+        return this;
+      }
+      /**
+       * <code>.google.protobuf.StringValue job_name = 3;</code>
+       */
+      public Builder mergeJobName(com.google.protobuf.StringValue value) {
+        if (jobNameBuilder_ == null) {
+          if (jobName_ != null) {
+            jobName_ =
+              com.google.protobuf.StringValue.newBuilder(jobName_).mergeFrom(value).buildPartial();
+          } else {
+            jobName_ = value;
+          }
+          onChanged();
+        } else {
+          jobNameBuilder_.mergeFrom(value);
+        }
+
+        return this;
+      }
+      /**
+       * <code>.google.protobuf.StringValue job_name = 3;</code>
+       */
+      public Builder clearJobName() {
+        if (jobNameBuilder_ == null) {
+          jobName_ = null;
+          onChanged();
+        } else {
+          jobName_ = null;
+          jobNameBuilder_ = null;
+        }
+
+        return this;
+      }
+      /**
+       * <code>.google.protobuf.StringValue job_name = 3;</code>
+       */
+      public com.google.protobuf.StringValue.Builder getJobNameBuilder() {
+        
+        onChanged();
+        return getJobNameFieldBuilder().getBuilder();
+      }
+      /**
+       * <code>.google.protobuf.StringValue job_name = 3;</code>
+       */
+      public com.google.protobuf.StringValueOrBuilder getJobNameOrBuilder() {
+        if (jobNameBuilder_ != null) {
+          return jobNameBuilder_.getMessageOrBuilder();
+        } else {
+          return jobName_ == null ?
+              com.google.protobuf.StringValue.getDefaultInstance() : jobName_;
+        }
+      }
+      /**
+       * <code>.google.protobuf.StringValue job_name = 3;</code>
+       */
+      private com.google.protobuf.SingleFieldBuilderV3<
+          com.google.protobuf.StringValue, com.google.protobuf.StringValue.Builder, com.google.protobuf.StringValueOrBuilder> 
+          getJobNameFieldBuilder() {
+        if (jobNameBuilder_ == null) {
+          jobNameBuilder_ = new com.google.protobuf.SingleFieldBuilderV3<
+              com.google.protobuf.StringValue, com.google.protobuf.StringValue.Builder, com.google.protobuf.StringValueOrBuilder>(
+                  getJobName(),
+                  getParentForChildren(),
+                  isClean());
+          jobName_ = null;
+        }
+        return jobNameBuilder_;
       }
       @java.lang.Override
       public final Builder setUnknownFields(
@@ -32270,7 +32676,7 @@ public final class Message {
       "\007version\030\001 \001(\0132\034.google.protobuf.StringV" +
       "alue\022-\n\010model_id\030\002 \001(\0132\033.google.protobuf" +
       ".Int64Value\0228\n\023project_snapshot_id\030\003 \001(\013" +
-      "2\033.google.protobuf.Int64Value\"\366\002\n\021ModelV" +
+      "2\033.google.protobuf.Int64Value\"\246\003\n\021ModelV" +
       "ersionProto\022-\n\007version\030\001 \001(\0132\034.google.pr" +
       "otobuf.StringValue\022-\n\010model_id\030\002 \001(\0132\033.g" +
       "oogle.protobuf.Int64Value\0228\n\023project_sna" +
@@ -32280,138 +32686,141 @@ public final class Message {
       "le.protobuf.StringValue\0222\n\014version_desc\030" +
       "\007 \001(\0132\034.google.protobuf.StringValue\0221\n\rc" +
       "urrent_stage\030\010 \001(\0162\032.ai_flow.ModelVersio" +
-      "nStage\"\237\004\n\010JobProto\022\014\n\004uuid\030\001 \001(\003\022\014\n\004nam" +
-      "e\030\002 \001(\t\022:\n\025workflow_execution_id\030\003 \001(\0132\033" +
-      ".google.protobuf.Int64Value\022&\n\tjob_state" +
-      "\030\004 \001(\0162\023.ai_flow.StateProto\0225\n\npropertie" +
-      "s\030\005 \003(\0132!.ai_flow.JobProto.PropertiesEnt" +
-      "ry\022,\n\006job_id\030\006 \001(\0132\034.google.protobuf.Str" +
-      "ingValue\022/\n\nstart_time\030\007 \001(\0132\033.google.pr" +
-      "otobuf.Int64Value\022-\n\010end_time\030\010 \001(\0132\033.go" +
-      "ogle.protobuf.Int64Value\022-\n\007log_uri\030\t \001(" +
-      "\0132\034.google.protobuf.StringValue\022/\n\tsigna" +
-      "ture\030\n \001(\0132\034.google.protobuf.StringValue" +
-      "\022;\n\022workflow_execution\030\013 \001(\0132\037.ai_flow.W" +
-      "orkflowExecutionProto\0321\n\017PropertiesEntry" +
-      "\022\013\n\003key\030\001 \001(\t\022\r\n\005value\030\002 \001(\t:\0028\001\"\342\001\n\rWor" +
-      "kflowProto\022\014\n\004uuid\030\001 \001(\003\022\014\n\004name\030\002 \001(\t\0223" +
-      "\n\rworkflow_json\030\003 \001(\0132\034.google.protobuf." +
-      "StringValue\022:\n\nproperties\030\004 \003(\0132&.ai_flo" +
-      "w.WorkflowProto.PropertiesEntry\022\021\n\tnames" +
-      "pace\030\005 \001(\t\0321\n\017PropertiesEntry\022\013\n\003key\030\001 \001" +
-      "(\t\022\r\n\005value\030\002 \001(\t:\0028\001\"\300\004\n\026WorkflowExecut" +
-      "ionProto\022\014\n\004uuid\030\001 \001(\003\022\014\n\004name\030\002 \001(\t\022/\n\n" +
-      "project_id\030\003 \001(\0132\033.google.protobuf.Int64" +
-      "Value\022,\n\017execution_state\030\004 \001(\0162\023.ai_flow" +
-      ".StateProto\022C\n\nproperties\030\005 \003(\0132/.ai_flo" +
-      "w.WorkflowExecutionProto.PropertiesEntry" +
-      "\022/\n\nstart_time\030\006 \001(\0132\033.google.protobuf.I" +
-      "nt64Value\022-\n\010end_time\030\007 \001(\0132\033.google.pro" +
-      "tobuf.Int64Value\022-\n\007log_uri\030\010 \001(\0132\034.goog" +
-      "le.protobuf.StringValue\0223\n\rworkflow_json" +
-      "\030\t \001(\0132\034.google.protobuf.StringValue\022/\n\t" +
-      "signature\030\n \001(\0132\034.google.protobuf.String" +
-      "Value\022\024\n\014execution_id\030\013 \001(\t\022(\n\010workflow\030" +
-      "\014 \001(\0132\026.ai_flow.WorkflowProto\0321\n\017Propert" +
+      "nStage\022.\n\010job_name\030\t \001(\0132\034.google.protob" +
+      "uf.StringValue\"\237\004\n\010JobProto\022\014\n\004uuid\030\001 \001(" +
+      "\003\022\014\n\004name\030\002 \001(\t\022:\n\025workflow_execution_id" +
+      "\030\003 \001(\0132\033.google.protobuf.Int64Value\022&\n\tj" +
+      "ob_state\030\004 \001(\0162\023.ai_flow.StateProto\0225\n\np" +
+      "roperties\030\005 \003(\0132!.ai_flow.JobProto.Prope" +
+      "rtiesEntry\022,\n\006job_id\030\006 \001(\0132\034.google.prot" +
+      "obuf.StringValue\022/\n\nstart_time\030\007 \001(\0132\033.g" +
+      "oogle.protobuf.Int64Value\022-\n\010end_time\030\010 " +
+      "\001(\0132\033.google.protobuf.Int64Value\022-\n\007log_" +
+      "uri\030\t \001(\0132\034.google.protobuf.StringValue\022" +
+      "/\n\tsignature\030\n \001(\0132\034.google.protobuf.Str" +
+      "ingValue\022;\n\022workflow_execution\030\013 \001(\0132\037.a" +
+      "i_flow.WorkflowExecutionProto\0321\n\017Propert" +
       "iesEntry\022\013\n\003key\030\001 \001(\t\022\r\n\005value\030\002 \001(\t:\0028\001" +
-      "\"\303\001\n\014ProjectProto\022\014\n\004uuid\030\001 \001(\003\022\014\n\004name\030" +
-      "\002 \001(\t\0229\n\nproperties\030\003 \003(\0132%.ai_flow.Proj" +
-      "ectProto.PropertiesEntry\022)\n\003uri\030\004 \001(\0132\034." +
-      "google.protobuf.StringValue\0321\n\017Propertie" +
-      "sEntry\022\013\n\003key\030\001 \001(\t\022\r\n\005value\030\002 \001(\t:\0028\001\"\221" +
-      "\003\n\rArtifactProto\022\014\n\004uuid\030\001 \001(\003\022\014\n\004name\030\002" +
-      " \001(\t\022:\n\nproperties\030\003 \003(\0132&.ai_flow.Artif" +
-      "actProto.PropertiesEntry\0223\n\rartifact_typ" +
-      "e\030\004 \001(\0132\034.google.protobuf.StringValue\022)\n" +
-      "\003uri\030\005 \001(\0132\034.google.protobuf.StringValue" +
-      "\0221\n\013description\030\006 \001(\0132\034.google.protobuf." +
-      "StringValue\0220\n\013create_time\030\007 \001(\0132\033.googl" +
-      "e.protobuf.Int64Value\0220\n\013update_time\030\010 \001" +
-      "(\0132\033.google.protobuf.Int64Value\0321\n\017Prope" +
-      "rtiesEntry\022\013\n\003key\030\001 \001(\t\022\r\n\005value\030\002 \001(\t:\002" +
-      "8\001\"z\n\024RegisteredModelParam\0220\n\nmodel_name" +
-      "\030\001 \001(\0132\034.google.protobuf.StringValue\0220\n\n" +
-      "model_desc\030\002 \001(\0132\034.google.protobuf.Strin" +
-      "gValue\"\336\001\n\021ModelVersionParam\0220\n\nmodel_pa" +
-      "th\030\001 \001(\0132\034.google.protobuf.StringValue\0220" +
-      "\n\nmodel_type\030\002 \001(\0132\034.google.protobuf.Str" +
-      "ingValue\0222\n\014version_desc\030\003 \001(\0132\034.google." +
-      "protobuf.StringValue\0221\n\rcurrent_stage\030\004 " +
-      "\001(\0162\032.ai_flow.ModelVersionStage\"w\n\016Model" +
-      "MetaParam\0220\n\nmodel_name\030\001 \001(\0132\034.google.p" +
-      "rotobuf.StringValue\0223\n\rmodel_version\030\002 \001" +
-      "(\0132\034.google.protobuf.StringValue\"A\n\010Resp" +
-      "onse\022\023\n\013return_code\030\001 \001(\t\022\022\n\nreturn_msg\030" +
-      "\002 \001(\t\022\014\n\004data\030\003 \001(\t\"[\n\023RegisteredModelMe" +
-      "ta\022\022\n\nmodel_name\030\001 \001(\t\0220\n\nmodel_desc\030\002 \001" +
-      "(\0132\034.google.protobuf.StringValue\"\275\002\n\020Mod" +
-      "elVersionMeta\022\022\n\nmodel_name\030\001 \001(\t\022\025\n\rmod" +
-      "el_version\030\002 \001(\t\0220\n\nmodel_path\030\003 \001(\0132\034.g" +
-      "oogle.protobuf.StringValue\0220\n\nmodel_type" +
-      "\030\005 \001(\0132\034.google.protobuf.StringValue\0222\n\014" +
-      "version_desc\030\006 \001(\0132\034.google.protobuf.Str" +
-      "ingValue\0223\n\016version_status\030\007 \001(\0162\033.ai_fl" +
-      "ow.ModelVersionStatus\0221\n\rcurrent_stage\030\010" +
-      " \001(\0162\032.ai_flow.ModelVersionStage\"\210\001\n\025Reg" +
-      "isteredModelDetail\0226\n\020registered_model\030\001" +
-      " \001(\0132\034.ai_flow.RegisteredModelMeta\0227\n\024la" +
-      "test_model_version\030\002 \001(\0132\031.ai_flow.Model" +
-      "VersionMeta\"O\n\024RegisteredModelMetas\0227\n\021r" +
-      "egistered_models\030\001 \003(\0132\034.ai_flow.Registe" +
-      "redModelMeta\"J\n\013ResultProto\022$\n\006status\030\001 " +
-      "\001(\0162\024.ai_flow.StatusProto\022\025\n\rerror_messa" +
-      "ge\030\002 \001(\t\"\241\005\n\017MetricMetaProto\022\014\n\004uuid\030\001 \001" +
-      "(\003\022*\n\004name\030\002 \001(\0132\034.google.protobuf.Strin" +
-      "gValue\022/\n\ndataset_id\030\003 \001(\0132\033.google.prot" +
-      "obuf.Int64Value\0220\n\nmodel_name\030\004 \001(\0132\034.go" +
-      "ogle.protobuf.StringValue\0223\n\rmodel_versi" +
-      "on\030\005 \001(\0132\034.google.protobuf.StringValue\022+" +
-      "\n\006job_id\030\006 \001(\0132\033.google.protobuf.Int64Va" +
-      "lue\022/\n\nstart_time\030\007 \001(\0132\033.google.protobu" +
-      "f.Int64Value\022-\n\010end_time\030\010 \001(\0132\033.google." +
-      "protobuf.Int64Value\022-\n\013metric_type\030\t \001(\016" +
-      "2\030.ai_flow.MetricTypeProto\022)\n\003uri\030\n \001(\0132" +
-      "\034.google.protobuf.StringValue\022*\n\004tags\030\013 " +
-      "\001(\0132\034.google.protobuf.StringValue\0228\n\022met" +
-      "ric_description\030\014 \001(\0132\034.google.protobuf." +
-      "StringValue\022<\n\nproperties\030\r \003(\0132(.ai_flo" +
-      "w.MetricMetaProto.PropertiesEntry\0321\n\017Pro" +
-      "pertiesEntry\022\013\n\003key\030\001 \001(\t\022\r\n\005value\030\002 \001(\t" +
-      ":\0028\001\"\270\001\n\022MetricSummaryProto\022\014\n\004uuid\030\001 \001(" +
-      "\003\022.\n\tmetric_id\030\002 \001(\0132\033.google.protobuf.I" +
-      "nt64Value\0220\n\nmetric_key\030\003 \001(\0132\034.google.p" +
-      "rotobuf.StringValue\0222\n\014metric_value\030\004 \001(" +
-      "\0132\034.google.protobuf.StringValue*\300\003\n\nRetu" +
-      "rnCode\022\013\n\007SUCCESS\020\000\022\022\n\016INTERNAL_ERROR\020\001\022" +
-      "\033\n\027TEMPORARILY_UNAVAILABLE\020\002\022\014\n\010IO_ERROR" +
-      "\020\003\022\017\n\013BAD_REQUEST\020\004\022\034\n\027INVALID_PARAMETER" +
-      "_VALUE\020\350\007\022\027\n\022ENDPOINT_NOT_FOUND\020\351\007\022\026\n\021MA" +
-      "LFORMED_REQUEST\020\352\007\022\022\n\rINVALID_STATE\020\353\007\022\026" +
-      "\n\021PERMISSION_DENIED\020\354\007\022\025\n\020FEATURE_DISABL" +
-      "ED\020\355\007\022\032\n\025CUSTOMER_UNAUTHORIZED\020\356\007\022\033\n\026REQ" +
-      "UEST_LIMIT_EXCEEDED\020\357\007\022\034\n\027RESOURCE_ALREA" +
-      "DY_EXISTS\020\321\017\022\034\n\027RESOURCE_DOES_NOT_EXIST\020" +
-      "\322\017\022\023\n\016QUOTA_EXCEEDED\020\271\027\022\034\n\027MAX_BLOCK_SIZ" +
-      "E_EXCEEDED\020\272\027\022\033\n\026MAX_READ_SIZE_EXCEEDED\020" +
-      "\273\027* \n\013StatusProto\022\006\n\002OK\020\000\022\t\n\005ERROR\020\001*\326\001\n" +
-      "\rDataTypeProto\022\031\n\025DATA_TYPE_UNSPECIFIED\020" +
-      "\000\022\t\n\005INT32\020\001\022\t\n\005INT64\020\002\022\013\n\007FLOAT32\020\003\022\013\n\007" +
-      "FLOAT64\020\004\022\n\n\006STRING\020\005\022\016\n\nINT32ARRAY\020\006\022\016\n" +
-      "\nINT64ARRAY\020\007\022\020\n\014FlOAT32ARRAY\020\010\022\020\n\014FLOAT" +
-      "64ARRAY\020\t\022\017\n\013STRINGARRAY\020\n\022\t\n\005BYTES\020\013\022\016\n" +
-      "\nBYTESARRAY\020\014*{\n\nStateProto\022\025\n\021STATE_UNS" +
-      "PECIFIED\020\000\022\010\n\004INIT\020\001\022\014\n\010STARTING\020\002\022\013\n\007RU" +
-      "NNING\020\003\022\014\n\010FINISHED\020\004\022\n\n\006FAILED\020\005\022\013\n\007KIL" +
-      "LING\020\006\022\n\n\006KILLED\020\007*F\n\rExecutionMode\022\036\n\032E" +
-      "XECUTION_MODE_UNSPECIFIED\020\000\022\t\n\005BATCH\020\001\022\n" +
-      "\n\006STREAM\020\002*}\n\022ModelVersionStatus\022\030\n\024PEND" +
-      "ING_REGISTRATION\020\000\022\027\n\023FAILED_REGISTRATIO" +
-      "N\020\001\022\t\n\005READY\020\003\022\024\n\020PENDING_DELETION\020\004\022\023\n\017" +
-      "FAILED_DELETION\020\005*\\\n\021ModelVersionStage\022\r" +
-      "\n\tGENERATED\020\000\022\r\n\tVALIDATED\020\001\022\014\n\010DEPLOYED" +
-      "\020\002\022\016\n\nDEPRECATED\020\003\022\013\n\007DELETED\020\004*)\n\017Metri" +
-      "cTypeProto\022\013\n\007DATASET\020\000\022\t\n\005MODEL\020\001B\"\n\020co" +
-      "m.aiflow.protoZ\010/ai_flow\210\001\001\220\001\001b\006proto3"
+      "\"\342\001\n\rWorkflowProto\022\014\n\004uuid\030\001 \001(\003\022\014\n\004name" +
+      "\030\002 \001(\t\0223\n\rworkflow_json\030\003 \001(\0132\034.google.p" +
+      "rotobuf.StringValue\022:\n\nproperties\030\004 \003(\0132" +
+      "&.ai_flow.WorkflowProto.PropertiesEntry\022" +
+      "\021\n\tnamespace\030\005 \001(\t\0321\n\017PropertiesEntry\022\013\n" +
+      "\003key\030\001 \001(\t\022\r\n\005value\030\002 \001(\t:\0028\001\"\300\004\n\026Workfl" +
+      "owExecutionProto\022\014\n\004uuid\030\001 \001(\003\022\014\n\004name\030\002" +
+      " \001(\t\022/\n\nproject_id\030\003 \001(\0132\033.google.protob" +
+      "uf.Int64Value\022,\n\017execution_state\030\004 \001(\0162\023" +
+      ".ai_flow.StateProto\022C\n\nproperties\030\005 \003(\0132" +
+      "/.ai_flow.WorkflowExecutionProto.Propert" +
+      "iesEntry\022/\n\nstart_time\030\006 \001(\0132\033.google.pr" +
+      "otobuf.Int64Value\022-\n\010end_time\030\007 \001(\0132\033.go" +
+      "ogle.protobuf.Int64Value\022-\n\007log_uri\030\010 \001(" +
+      "\0132\034.google.protobuf.StringValue\0223\n\rworkf" +
+      "low_json\030\t \001(\0132\034.google.protobuf.StringV" +
+      "alue\022/\n\tsignature\030\n \001(\0132\034.google.protobu" +
+      "f.StringValue\022\024\n\014execution_id\030\013 \001(\t\022(\n\010w" +
+      "orkflow\030\014 \001(\0132\026.ai_flow.WorkflowProto\0321\n" +
+      "\017PropertiesEntry\022\013\n\003key\030\001 \001(\t\022\r\n\005value\030\002" +
+      " \001(\t:\0028\001\"\303\001\n\014ProjectProto\022\014\n\004uuid\030\001 \001(\003\022" +
+      "\014\n\004name\030\002 \001(\t\0229\n\nproperties\030\003 \003(\0132%.ai_f" +
+      "low.ProjectProto.PropertiesEntry\022)\n\003uri\030" +
+      "\004 \001(\0132\034.google.protobuf.StringValue\0321\n\017P" +
+      "ropertiesEntry\022\013\n\003key\030\001 \001(\t\022\r\n\005value\030\002 \001" +
+      "(\t:\0028\001\"\221\003\n\rArtifactProto\022\014\n\004uuid\030\001 \001(\003\022\014" +
+      "\n\004name\030\002 \001(\t\022:\n\nproperties\030\003 \003(\0132&.ai_fl" +
+      "ow.ArtifactProto.PropertiesEntry\0223\n\rarti" +
+      "fact_type\030\004 \001(\0132\034.google.protobuf.String" +
+      "Value\022)\n\003uri\030\005 \001(\0132\034.google.protobuf.Str" +
+      "ingValue\0221\n\013description\030\006 \001(\0132\034.google.p" +
+      "rotobuf.StringValue\0220\n\013create_time\030\007 \001(\013" +
+      "2\033.google.protobuf.Int64Value\0220\n\013update_" +
+      "time\030\010 \001(\0132\033.google.protobuf.Int64Value\032" +
+      "1\n\017PropertiesEntry\022\013\n\003key\030\001 \001(\t\022\r\n\005value" +
+      "\030\002 \001(\t:\0028\001\"z\n\024RegisteredModelParam\0220\n\nmo" +
+      "del_name\030\001 \001(\0132\034.google.protobuf.StringV" +
+      "alue\0220\n\nmodel_desc\030\002 \001(\0132\034.google.protob" +
+      "uf.StringValue\"\336\001\n\021ModelVersionParam\0220\n\n" +
+      "model_path\030\001 \001(\0132\034.google.protobuf.Strin" +
+      "gValue\0220\n\nmodel_type\030\002 \001(\0132\034.google.prot" +
+      "obuf.StringValue\0222\n\014version_desc\030\003 \001(\0132\034" +
+      ".google.protobuf.StringValue\0221\n\rcurrent_" +
+      "stage\030\004 \001(\0162\032.ai_flow.ModelVersionStage\"" +
+      "\247\001\n\016ModelMetaParam\0220\n\nmodel_name\030\001 \001(\0132\034" +
+      ".google.protobuf.StringValue\0223\n\rmodel_ve" +
+      "rsion\030\002 \001(\0132\034.google.protobuf.StringValu" +
+      "e\022.\n\010job_name\030\003 \001(\0132\034.google.protobuf.St" +
+      "ringValue\"A\n\010Response\022\023\n\013return_code\030\001 \001" +
+      "(\t\022\022\n\nreturn_msg\030\002 \001(\t\022\014\n\004data\030\003 \001(\t\"[\n\023" +
+      "RegisteredModelMeta\022\022\n\nmodel_name\030\001 \001(\t\022" +
+      "0\n\nmodel_desc\030\002 \001(\0132\034.google.protobuf.St" +
+      "ringValue\"\275\002\n\020ModelVersionMeta\022\022\n\nmodel_" +
+      "name\030\001 \001(\t\022\025\n\rmodel_version\030\002 \001(\t\0220\n\nmod" +
+      "el_path\030\003 \001(\0132\034.google.protobuf.StringVa" +
+      "lue\0220\n\nmodel_type\030\005 \001(\0132\034.google.protobu" +
+      "f.StringValue\0222\n\014version_desc\030\006 \001(\0132\034.go" +
+      "ogle.protobuf.StringValue\0223\n\016version_sta" +
+      "tus\030\007 \001(\0162\033.ai_flow.ModelVersionStatus\0221" +
+      "\n\rcurrent_stage\030\010 \001(\0162\032.ai_flow.ModelVer" +
+      "sionStage\"\210\001\n\025RegisteredModelDetail\0226\n\020r" +
+      "egistered_model\030\001 \001(\0132\034.ai_flow.Register" +
+      "edModelMeta\0227\n\024latest_model_version\030\002 \001(" +
+      "\0132\031.ai_flow.ModelVersionMeta\"O\n\024Register" +
+      "edModelMetas\0227\n\021registered_models\030\001 \003(\0132" +
+      "\034.ai_flow.RegisteredModelMeta\"J\n\013ResultP" +
+      "roto\022$\n\006status\030\001 \001(\0162\024.ai_flow.StatusPro" +
+      "to\022\025\n\rerror_message\030\002 \001(\t\"\241\005\n\017MetricMeta" +
+      "Proto\022\014\n\004uuid\030\001 \001(\003\022*\n\004name\030\002 \001(\0132\034.goog" +
+      "le.protobuf.StringValue\022/\n\ndataset_id\030\003 " +
+      "\001(\0132\033.google.protobuf.Int64Value\0220\n\nmode" +
+      "l_name\030\004 \001(\0132\034.google.protobuf.StringVal" +
+      "ue\0223\n\rmodel_version\030\005 \001(\0132\034.google.proto" +
+      "buf.StringValue\022+\n\006job_id\030\006 \001(\0132\033.google" +
+      ".protobuf.Int64Value\022/\n\nstart_time\030\007 \001(\013" +
+      "2\033.google.protobuf.Int64Value\022-\n\010end_tim" +
+      "e\030\010 \001(\0132\033.google.protobuf.Int64Value\022-\n\013" +
+      "metric_type\030\t \001(\0162\030.ai_flow.MetricTypePr" +
+      "oto\022)\n\003uri\030\n \001(\0132\034.google.protobuf.Strin" +
+      "gValue\022*\n\004tags\030\013 \001(\0132\034.google.protobuf.S" +
+      "tringValue\0228\n\022metric_description\030\014 \001(\0132\034" +
+      ".google.protobuf.StringValue\022<\n\nproperti" +
+      "es\030\r \003(\0132(.ai_flow.MetricMetaProto.Prope" +
+      "rtiesEntry\0321\n\017PropertiesEntry\022\013\n\003key\030\001 \001" +
+      "(\t\022\r\n\005value\030\002 \001(\t:\0028\001\"\270\001\n\022MetricSummaryP" +
+      "roto\022\014\n\004uuid\030\001 \001(\003\022.\n\tmetric_id\030\002 \001(\0132\033." +
+      "google.protobuf.Int64Value\0220\n\nmetric_key" +
+      "\030\003 \001(\0132\034.google.protobuf.StringValue\0222\n\014" +
+      "metric_value\030\004 \001(\0132\034.google.protobuf.Str" +
+      "ingValue*\300\003\n\nReturnCode\022\013\n\007SUCCESS\020\000\022\022\n\016" +
+      "INTERNAL_ERROR\020\001\022\033\n\027TEMPORARILY_UNAVAILA" +
+      "BLE\020\002\022\014\n\010IO_ERROR\020\003\022\017\n\013BAD_REQUEST\020\004\022\034\n\027" +
+      "INVALID_PARAMETER_VALUE\020\350\007\022\027\n\022ENDPOINT_N" +
+      "OT_FOUND\020\351\007\022\026\n\021MALFORMED_REQUEST\020\352\007\022\022\n\rI" +
+      "NVALID_STATE\020\353\007\022\026\n\021PERMISSION_DENIED\020\354\007\022" +
+      "\025\n\020FEATURE_DISABLED\020\355\007\022\032\n\025CUSTOMER_UNAUT" +
+      "HORIZED\020\356\007\022\033\n\026REQUEST_LIMIT_EXCEEDED\020\357\007\022" +
+      "\034\n\027RESOURCE_ALREADY_EXISTS\020\321\017\022\034\n\027RESOURC" +
+      "E_DOES_NOT_EXIST\020\322\017\022\023\n\016QUOTA_EXCEEDED\020\271\027" +
+      "\022\034\n\027MAX_BLOCK_SIZE_EXCEEDED\020\272\027\022\033\n\026MAX_RE" +
+      "AD_SIZE_EXCEEDED\020\273\027* \n\013StatusProto\022\006\n\002OK" +
+      "\020\000\022\t\n\005ERROR\020\001*\326\001\n\rDataTypeProto\022\031\n\025DATA_" +
+      "TYPE_UNSPECIFIED\020\000\022\t\n\005INT32\020\001\022\t\n\005INT64\020\002" +
+      "\022\013\n\007FLOAT32\020\003\022\013\n\007FLOAT64\020\004\022\n\n\006STRING\020\005\022\016" +
+      "\n\nINT32ARRAY\020\006\022\016\n\nINT64ARRAY\020\007\022\020\n\014FlOAT3" +
+      "2ARRAY\020\010\022\020\n\014FLOAT64ARRAY\020\t\022\017\n\013STRINGARRA" +
+      "Y\020\n\022\t\n\005BYTES\020\013\022\016\n\nBYTESARRAY\020\014*{\n\nStateP" +
+      "roto\022\025\n\021STATE_UNSPECIFIED\020\000\022\010\n\004INIT\020\001\022\014\n" +
+      "\010STARTING\020\002\022\013\n\007RUNNING\020\003\022\014\n\010FINISHED\020\004\022\n" +
+      "\n\006FAILED\020\005\022\013\n\007KILLING\020\006\022\n\n\006KILLED\020\007*F\n\rE" +
+      "xecutionMode\022\036\n\032EXECUTION_MODE_UNSPECIFI" +
+      "ED\020\000\022\t\n\005BATCH\020\001\022\n\n\006STREAM\020\002*}\n\022ModelVers" +
+      "ionStatus\022\030\n\024PENDING_REGISTRATION\020\000\022\027\n\023F" +
+      "AILED_REGISTRATION\020\001\022\t\n\005READY\020\003\022\024\n\020PENDI" +
+      "NG_DELETION\020\004\022\023\n\017FAILED_DELETION\020\005*\\\n\021Mo" +
+      "delVersionStage\022\r\n\tGENERATED\020\000\022\r\n\tVALIDA" +
+      "TED\020\001\022\014\n\010DEPLOYED\020\002\022\016\n\nDEPRECATED\020\003\022\013\n\007D" +
+      "ELETED\020\004*)\n\017MetricTypeProto\022\013\n\007DATASET\020\000" +
+      "\022\t\n\005MODEL\020\001B\"\n\020com.aiflow.protoZ\010/ai_flo" +
+      "w\210\001\001\220\001\001b\006proto3"
     };
     descriptor = com.google.protobuf.Descriptors.FileDescriptor
       .internalBuildGeneratedFileFrom(descriptorData,
@@ -32459,7 +32868,7 @@ public final class Message {
     internal_static_ai_flow_ModelVersionProto_fieldAccessorTable = new
       com.google.protobuf.GeneratedMessageV3.FieldAccessorTable(
         internal_static_ai_flow_ModelVersionProto_descriptor,
-        new java.lang.String[] { "Version", "ModelId", "ProjectSnapshotId", "ModelPath", "ModelType", "VersionDesc", "CurrentStage", });
+        new java.lang.String[] { "Version", "ModelId", "ProjectSnapshotId", "ModelPath", "ModelType", "VersionDesc", "CurrentStage", "JobName", });
     internal_static_ai_flow_JobProto_descriptor =
       getDescriptor().getMessageTypes().get(6);
     internal_static_ai_flow_JobProto_fieldAccessorTable = new
@@ -32537,7 +32946,7 @@ public final class Message {
     internal_static_ai_flow_ModelMetaParam_fieldAccessorTable = new
       com.google.protobuf.GeneratedMessageV3.FieldAccessorTable(
         internal_static_ai_flow_ModelMetaParam_descriptor,
-        new java.lang.String[] { "ModelName", "ModelVersion", });
+        new java.lang.String[] { "ModelName", "ModelVersion", "JobName", });
     internal_static_ai_flow_Response_descriptor =
       getDescriptor().getMessageTypes().get(14);
     internal_static_ai_flow_Response_fieldAccessorTable = new

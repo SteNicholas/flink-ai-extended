@@ -25,16 +25,18 @@ class ModelVersion(_ModelRepoEntity):
     :py:class:`ai_flow.model_center.entity.RegisteredModel` and user-defined version.
     """
 
-    def __init__(self, model_name, model_version):
+    def __init__(self, model_name, model_version, job_name=None):
         """
         Construct a :py:class:`ai_flow.model_center.entity.ModelVersion` instance
 
         :param model_name: Unique name for this registered model within Model Registry.
-        :param model_version: String user-defined model version
+        :param model_version: String user-defined model version.
+        :param job_name: Name of the job that registers the model version.
         """
         super(ModelVersion, self).__init__()
         self._model_name = model_name
         self._model_version = model_version
+        self._job_name = job_name
 
     @property
     def model_name(self):
@@ -46,12 +48,18 @@ class ModelVersion(_ModelRepoEntity):
         """String user-defined version"""
         return self._model_version
 
+    @property
+    def job_name(self):
+        """Name of the job that registers the model version"""
+        return self._job_name
+
     # proto mappers
     @classmethod
     def from_proto(cls, proto):
         model_meta = proto.model_meta
         return ModelVersion(model_meta.model_name.value if model_meta.HasField("model_name") else None,
-                            model_meta.model_version.value if model_meta.HasField("model_version") else None)
+                            model_meta.model_version.value if model_meta.HasField("model_version") else None,
+                            model_meta.job_name.value if model_meta.HasField("job_name") else None)
 
     @classmethod
     def from_resp_proto(cls, proto):

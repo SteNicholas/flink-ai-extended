@@ -579,15 +579,21 @@ class AIFlowClientTestCases(object):
         model_path1 = 'fs://source1.pkl'
         model_type1 = '{"flavor.version":1}'
         version_desc1 = 'test create model version1'
+        job_name1 = 'test_create_model_version_job_1'
         response = client.create_model_version(model_name=model_name, model_path=model_path1,
                                                model_type=model_type1,
-                                               version_desc=version_desc1)
+                                               version_desc=version_desc1,
+                                               job_name=job_name1)
         self.assertIsNotNone(response)
         self.assertEqual(response.model_name, model_name)
         self.assertEqual(response.model_version, '1')
         self.assertEqual(response.model_path, model_path1)
         self.assertEqual(response.model_type, model_type1)
         self.assertEqual(response.version_desc, version_desc1)
+
+        model_events = client.list_events(key=model_name, version=0)
+        self.assertEqual(len(model_events), 1)
+        self.assertEqual(model_events[0].context, job_name1)
 
         model_path2 = 'fs://source2.pkl'
         model_type2 = '{"flavor.version":2}'

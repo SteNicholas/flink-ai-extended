@@ -43,7 +43,7 @@ DESCRIPTOR = _descriptor.FileDescriptor(
   syntax='proto3',
   serialized_options=b'\n\020com.aiflow.protoZ\010/ai_flow\210\001\001\220\001\001',
   create_key=_descriptor._internal_create_key,
-  serialized_pb=b'\n\x16metadata_service.proto\x12\x07\x61i_flow\x1a\x1egoogle/protobuf/wrappers.proto\x1a\rmessage.proto\x1a\x1cgoogle/api/annotations.proto\"\x17\n\tIdRequest\x12\n\n\x02id\x18\x01 \x01(\x03\"\x1b\n\x0bNameRequest\x12\x0c\n\x04name\x18\x01 \x01(\t\"0\n\x0bListRequest\x12\x11\n\tpage_size\x18\x01 \x01(\x03\x12\x0e\n\x06offset\x18\x02 \x01(\x03\"E\n\x0cMetaResponse\x12\x13\n\x0breturn_code\x18\x01 \x01(\t\x12\x12\n\nreturn_msg\x18\x02 \x01(\t\x12\x0c\n\x04\x64\x61ta\x18\x03 \x01(\t\"@\n\x16RegisterDatasetRequest\x12&\n\x07\x64\x61taset\x18\x01 \x01(\x0b\x32\x15.ai_flow.DatasetProto\"B\n\x17RegisterDatasetsRequest\x12\'\n\x08\x64\x61tasets\x18\x01 \x03(\x0b\x32\x15.ai_flow.DatasetProto\";\n\x10\x44\x61tasetListProto\x12\'\n\x08\x64\x61tasets\x18\x01 \x03(\x0b\x32\x15.ai_flow.DatasetProto\"\xfc\x04\n\x14UpdateDatasetRequest\x12\x0c\n\x04name\x18\x01 \x01(\t\x12\x41\n\nproperties\x18\x02 \x03(\x0b\x32-.ai_flow.UpdateDatasetRequest.PropertiesEntry\x12\x11\n\tname_list\x18\x03 \x03(\t\x12)\n\ttype_list\x18\x04 \x03(\x0e\x32\x16.ai_flow.DataTypeProto\x12\x31\n\x0b\x64\x61ta_format\x18\x05 \x01(\x0b\x32\x1c.google.protobuf.StringValue\x12)\n\x03uri\x18\x06 \x01(\x0b\x32\x1c.google.protobuf.StringValue\x12\x31\n\x0b\x64\x65scription\x18\x07 \x01(\x0b\x32\x1c.google.protobuf.StringValue\x12\x32\n\x0c\x63\x61talog_name\x18\t \x01(\x0b\x32\x1c.google.protobuf.StringValue\x12\x32\n\x0c\x63\x61talog_type\x18\n \x01(\x0b\x32\x1c.google.protobuf.StringValue\x12\x36\n\x10\x63\x61talog_database\x18\x0b \x01(\x0b\x32\x1c.google.protobuf.StringValue\x12<\n\x16\x63\x61talog_connection_uri\x18\x0c \x01(\x0b\x32\x1c.google.protobuf.StringValue\x12\x33\n\rcatalog_table\x18\r \x01(\x0b\x32\x1c.google.protobuf.StringValue\x1a\x31\n\x0fPropertiesEntry\x12\x0b\n\x03key\x18\x01 \x01(\t\x12\r\n\x05value\x18\x02 \x01(\t:\x02\x38\x01\"S\n\x1cRegisterModelRelationRequest\x12\x33\n\x0emodel_relation\x18\x01 \x01(\x0b\x32\x1b.ai_flow.ModelRelationProto\":\n\x14RegisterModelRequest\x12\"\n\x05model\x18\x01 \x01(\x0b\x32\x13.ai_flow.ModelProto\"N\n\x16ModelRelationListProto\x12\x34\n\x0fmodel_relations\x18\x01 \x03(\x0b\x32\x1b.ai_flow.ModelRelationProto\"9\n\x17ModelVersionNameRequest\x12\x0c\n\x04name\x18\x01 \x01(\t\x12\x10\n\x08model_id\x18\x02 \x01(\x03\"i\n#RegisterModelVersionRelationRequest\x12\x42\n\x16model_version_relation\x18\x01 \x01(\x0b\x32\".ai_flow.ModelVersionRelationProto\"P\n\x1bRegisterModelVersionRequest\x12\x31\n\rmodel_version\x18\x01 \x01(\x0b\x32\x1a.ai_flow.ModelVersionProto\"V\n\x1fListModelVersionRelationRequest\x12\x10\n\x08model_id\x18\x01 \x01(\x03\x12\x11\n\tpage_size\x18\x02 \x01(\x03\x12\x0e\n\x06offset\x18\x03 \x01(\x03\"[\n\x1dModelVersionRelationListProto\x12:\n\x0emodel_versions\x18\x01 \x03(\x0b\x32\".ai_flow.ModelVersionRelationProto\"K\n\x15ModelVersionListProto\x12\x32\n\x0emodel_versions\x18\x01 \x03(\x0b\x32\x1a.ai_flow.ModelVersionProto\" \n\x10ModelNameRequest\x12\x0c\n\x04name\x18\x01 \x01(\t\"@\n\x16RegisterProjectRequest\x12&\n\x07project\x18\x01 \x01(\x0b\x32\x15.ai_flow.ProjectProto\"\xc5\x01\n\x14UpdateProjectRequest\x12\x0c\n\x04name\x18\x01 \x01(\t\x12\x41\n\nproperties\x18\x02 \x03(\x0b\x32-.ai_flow.UpdateProjectRequest.PropertiesEntry\x12)\n\x03uri\x18\x03 \x01(\x0b\x32\x1c.google.protobuf.StringValue\x1a\x31\n\x0fPropertiesEntry\x12\x0b\n\x03key\x18\x01 \x01(\t\x12\r\n\x05value\x18\x02 \x01(\t:\x02\x38\x01\";\n\x10ProjectListProto\x12\'\n\x08projects\x18\x01 \x03(\x0b\x32\x15.ai_flow.ProjectProto\"C\n\x17RegisterArtifactRequest\x12(\n\x08\x61rtifact\x18\x01 \x01(\x0b\x32\x16.ai_flow.ArtifactProto\"\xaf\x02\n\x15UpdateArtifactRequest\x12\x0c\n\x04name\x18\x01 \x01(\t\x12\x42\n\nproperties\x18\x02 \x03(\x0b\x32..ai_flow.UpdateArtifactRequest.PropertiesEntry\x12\x33\n\rartifact_type\x18\x03 \x01(\x0b\x32\x1c.google.protobuf.StringValue\x12)\n\x03uri\x18\x04 \x01(\x0b\x32\x1c.google.protobuf.StringValue\x12\x31\n\x0b\x64\x65scription\x18\x05 \x01(\x0b\x32\x1c.google.protobuf.StringValue\x1a\x31\n\x0fPropertiesEntry\x12\x0b\n\x03key\x18\x01 \x01(\t\x12\r\n\x05value\x18\x02 \x01(\t:\x02\x38\x01\">\n\x11\x41rtifactListProto\x12)\n\tartifacts\x18\x01 \x03(\x0b\x32\x16.ai_flow.ArtifactProto2\x8c+\n\x0fMetadataService\x12i\n\x0egetDatasetById\x12\x12.ai_flow.IdRequest\x1a\x11.ai_flow.Response\"0\x82\xd3\xe4\x93\x02*\"%/aiflow/metadata_store/dataset/get/id:\x01*\x12o\n\x10getDatasetByName\x12\x14.ai_flow.NameRequest\x1a\x11.ai_flow.Response\"2\x82\xd3\xe4\x93\x02,\"\'/aiflow/metadata_store/dataset/get/name:\x01*\x12g\n\x0clistDatasets\x12\x14.ai_flow.ListRequest\x1a\x11.ai_flow.Response\".\x82\xd3\xe4\x93\x02(\"#/aiflow/metadata_store/dataset/list:\x01*\x12u\n\x0fregisterDataset\x12\x1f.ai_flow.RegisterDatasetRequest\x1a\x11.ai_flow.Response\".\x82\xd3\xe4\x93\x02(\"#/aiflow/metadata_store/dataset/save:\x01*\x12\x8d\x01\n\x1aregisterDatasetWithCatalog\x12\x1f.ai_flow.RegisterDatasetRequest\x1a\x11.ai_flow.Response\";\x82\xd3\xe4\x93\x02\x35\"0/aiflow/metadata_store/dataset/save_with_catalog:\x01*\x12w\n\x10registerDatasets\x12 .ai_flow.RegisterDatasetsRequest\x1a\x11.ai_flow.Response\".\x82\xd3\xe4\x93\x02(\"#/aiflow/metadata_store/dataset/save:\x01*\x12s\n\rupdateDataset\x12\x1d.ai_flow.UpdateDatasetRequest\x1a\x11.ai_flow.Response\"0\x82\xd3\xe4\x93\x02*\"%/aiflow/metadata_store/dataset/update:\x01*\x12o\n\x11\x64\x65leteDatasetById\x12\x12.ai_flow.IdRequest\x1a\x11.ai_flow.Response\"3\x82\xd3\xe4\x93\x02-\"(/aiflow/metadata_store/dataset/delete/id:\x01*\x12u\n\x13\x64\x65leteDatasetByName\x12\x14.ai_flow.NameRequest\x1a\x11.ai_flow.Response\"5\x82\xd3\xe4\x93\x02/\"*/aiflow/metadata_store/dataset/delete/name:\x01*\x12v\n\x14getModelRelationById\x12\x12.ai_flow.IdRequest\x1a\x11.ai_flow.Response\"7\x82\xd3\xe4\x93\x02\x31\",/aiflow/metadata_store/model_relation/get/id:\x01*\x12|\n\x16getModelRelationByName\x12\x14.ai_flow.NameRequest\x1a\x11.ai_flow.Response\"9\x82\xd3\xe4\x93\x02\x33\"./aiflow/metadata_store/model_relation/get/name:\x01*\x12s\n\x11listModelRelation\x12\x14.ai_flow.ListRequest\x1a\x11.ai_flow.Response\"5\x82\xd3\xe4\x93\x02/\"*/aiflow/metadata_store/model_relation/list:\x01*\x12\x88\x01\n\x15registerModelRelation\x12%.ai_flow.RegisterModelRelationRequest\x1a\x11.ai_flow.Response\"5\x82\xd3\xe4\x93\x02/\"*/aiflow/metadata_store/model_relation/save:\x01*\x12|\n\x17\x64\x65leteModelRelationById\x12\x12.ai_flow.IdRequest\x1a\x11.ai_flow.Response\":\x82\xd3\xe4\x93\x02\x34\"//aiflow/metadata_store/model_relation/delete/id:\x01*\x12\x82\x01\n\x19\x64\x65leteModelRelationByName\x12\x14.ai_flow.NameRequest\x1a\x11.ai_flow.Response\"<\x82\xd3\xe4\x93\x02\x36\"1/aiflow/metadata_store/model_relation/delete/name:\x01*\x12\x65\n\x0cgetModelById\x12\x12.ai_flow.IdRequest\x1a\x11.ai_flow.Response\".\x82\xd3\xe4\x93\x02(\"#/aiflow/metadata_store/model/get/id:\x01*\x12k\n\x0egetModelByName\x12\x14.ai_flow.NameRequest\x1a\x11.ai_flow.Response\"0\x82\xd3\xe4\x93\x02*\"%/aiflow/metadata_store/model/get/name:\x01*\x12o\n\rregisterModel\x12\x1d.ai_flow.RegisterModelRequest\x1a\x11.ai_flow.Response\",\x82\xd3\xe4\x93\x02&\"!/aiflow/metadata_store/model/save:\x01*\x12k\n\x0f\x64\x65leteModelById\x12\x12.ai_flow.IdRequest\x1a\x11.ai_flow.Response\"1\x82\xd3\xe4\x93\x02+\"&/aiflow/metadata_store/model/delete/id:\x01*\x12q\n\x11\x64\x65leteModelByName\x12\x14.ai_flow.NameRequest\x1a\x11.ai_flow.Response\"3\x82\xd3\xe4\x93\x02-\"(/aiflow/metadata_store/model/delete/name:\x01*\x12\x9c\x01\n getModelVersionRelationByVersion\x12 .ai_flow.ModelVersionNameRequest\x1a\x11.ai_flow.Response\"C\x82\xd3\xe4\x93\x02=\"8/aiflow/metadata_store/modelVersion_relation/get/version:\x01*\x12\x95\x01\n\x18listModelVersionRelation\x12(.ai_flow.ListModelVersionRelationRequest\x1a\x11.ai_flow.Response\"<\x82\xd3\xe4\x93\x02\x36\"1/aiflow/metadata_store/modelVersion_relation/list:\x01*\x12\x9d\x01\n\x1cregisterModelVersionRelation\x12,.ai_flow.RegisterModelVersionRelationRequest\x1a\x11.ai_flow.Response\"<\x82\xd3\xe4\x93\x02\x36\"1/aiflow/metadata_store/modelVersion_relation/save:\x01*\x12\xa2\x01\n#deleteModelVersionRelationByVersion\x12 .ai_flow.ModelVersionNameRequest\x1a\x11.ai_flow.Response\"F\x82\xd3\xe4\x93\x02@\";/aiflow/metadata_store/modelVersion_relation/delete/version:\x01*\x12\x8b\x01\n\x18getModelVersionByVersion\x12 .ai_flow.ModelVersionNameRequest\x1a\x11.ai_flow.Response\":\x82\xd3\xe4\x93\x02\x34\"//aiflow/metadata_store/modelVersion/get/version:\x01*\x12\x84\x01\n\x14registerModelVersion\x12$.ai_flow.RegisterModelVersionRequest\x1a\x11.ai_flow.Response\"3\x82\xd3\xe4\x93\x02-\"(/aiflow/metadata_store/modelVersion/save:\x01*\x12\x91\x01\n\x1b\x64\x65leteModelVersionByVersion\x12 .ai_flow.ModelVersionNameRequest\x1a\x11.ai_flow.Response\"=\x82\xd3\xe4\x93\x02\x37\"2/aiflow/metadata_store/modelVersion/delete/version:\x01*\x12\x8b\x01\n\x17getDeployedModelVersion\x12\x19.ai_flow.ModelNameRequest\x1a\x11.ai_flow.Response\"B\x82\xd3\xe4\x93\x02<\"7/aiflow/metadata_store/modelVersion/get_serving_version:\x01*\x12\xa1\x01\n\x1egetLatestValidatedModelVersion\x12\x19.ai_flow.ModelNameRequest\x1a\x11.ai_flow.Response\"Q\x82\xd3\xe4\x93\x02K\"F/aiflow/metadata_store/modelVersion/get_latest_validated_model_version:\x01*\x12\xa1\x01\n\x1egetLatestGeneratedModelVersion\x12\x19.ai_flow.ModelNameRequest\x1a\x11.ai_flow.Response\"Q\x82\xd3\xe4\x93\x02K\"F/aiflow/metadata_store/modelVersion/get_latest_generated_model_version:\x01*\x12i\n\x0egetProjectById\x12\x12.ai_flow.IdRequest\x1a\x11.ai_flow.Response\"0\x82\xd3\xe4\x93\x02*\"%/aiflow/metadata_store/project/get/id:\x01*\x12o\n\x10getProjectByName\x12\x14.ai_flow.NameRequest\x1a\x11.ai_flow.Response\"2\x82\xd3\xe4\x93\x02,\"\'/aiflow/metadata_store/project/get/name:\x01*\x12u\n\x0fregisterProject\x12\x1f.ai_flow.RegisterProjectRequest\x1a\x11.ai_flow.Response\".\x82\xd3\xe4\x93\x02(\"#/aiflow/metadata_store/project/save:\x01*\x12s\n\rupdateProject\x12\x1d.ai_flow.UpdateProjectRequest\x1a\x11.ai_flow.Response\"0\x82\xd3\xe4\x93\x02*\"%/aiflow/metadata_store/project/update:\x01*\x12\x66\n\x0blistProject\x12\x14.ai_flow.ListRequest\x1a\x11.ai_flow.Response\".\x82\xd3\xe4\x93\x02(\"#/aiflow/metadata_store/project/list:\x01*\x12o\n\x11\x64\x65leteProjectById\x12\x12.ai_flow.IdRequest\x1a\x11.ai_flow.Response\"3\x82\xd3\xe4\x93\x02-\"(/aiflow/metadata_store/project/delete/id:\x01*\x12u\n\x13\x64\x65leteProjectByName\x12\x14.ai_flow.NameRequest\x1a\x11.ai_flow.Response\"5\x82\xd3\xe4\x93\x02/\"*/aiflow/metadata_store/project/delete/name:\x01*\x12k\n\x0fgetArtifactById\x12\x12.ai_flow.IdRequest\x1a\x11.ai_flow.Response\"1\x82\xd3\xe4\x93\x02+\"&/aiflow/metadata_store/artifact/get/id:\x01*\x12q\n\x11getArtifactByName\x12\x14.ai_flow.NameRequest\x1a\x11.ai_flow.Response\"3\x82\xd3\xe4\x93\x02-\"(/aiflow/metadata_store/artifact/get/name:\x01*\x12v\n\x0eupdateArtifact\x12\x1e.ai_flow.UpdateArtifactRequest\x1a\x11.ai_flow.Response\"1\x82\xd3\xe4\x93\x02+\"&/aiflow/metadata_store/artifact/update:\x01*\x12x\n\x10registerArtifact\x12 .ai_flow.RegisterArtifactRequest\x1a\x11.ai_flow.Response\"/\x82\xd3\xe4\x93\x02)\"$/aiflow/metadata_store/artifact/save:\x01*\x12h\n\x0clistArtifact\x12\x14.ai_flow.ListRequest\x1a\x11.ai_flow.Response\"/\x82\xd3\xe4\x93\x02)\"$/aiflow/metadata_store/artifact/list:\x01*\x12q\n\x12\x64\x65leteArtifactById\x12\x12.ai_flow.IdRequest\x1a\x11.ai_flow.Response\"4\x82\xd3\xe4\x93\x02.\")/aiflow/metadata_store/artifact/delete/id:\x01*\x12w\n\x14\x64\x65leteArtifactByName\x12\x14.ai_flow.NameRequest\x1a\x11.ai_flow.Response\"6\x82\xd3\xe4\x93\x02\x30\"+/aiflow/metadata_store/artifact/delete/name:\x01*B\"\n\x10\x63om.aiflow.protoZ\x08/ai_flow\x88\x01\x01\x90\x01\x01\x62\x06proto3'
+  serialized_pb=b'\n\x16metadata_service.proto\x12\x07\x61i_flow\x1a\x1egoogle/protobuf/wrappers.proto\x1a\rmessage.proto\x1a\x1cgoogle/api/annotations.proto\"\x17\n\tIdRequest\x12\n\n\x02id\x18\x01 \x01(\x03\"\x1b\n\x0bNameRequest\x12\x0c\n\x04name\x18\x01 \x01(\t\"0\n\x0bListRequest\x12\x11\n\tpage_size\x18\x01 \x01(\x03\x12\x0e\n\x06offset\x18\x02 \x01(\x03\"E\n\x0cMetaResponse\x12\x13\n\x0breturn_code\x18\x01 \x01(\t\x12\x12\n\nreturn_msg\x18\x02 \x01(\t\x12\x0c\n\x04\x64\x61ta\x18\x03 \x01(\t\"@\n\x16RegisterDatasetRequest\x12&\n\x07\x64\x61taset\x18\x01 \x01(\x0b\x32\x15.ai_flow.DatasetProto\"B\n\x17RegisterDatasetsRequest\x12\'\n\x08\x64\x61tasets\x18\x01 \x03(\x0b\x32\x15.ai_flow.DatasetProto\";\n\x10\x44\x61tasetListProto\x12\'\n\x08\x64\x61tasets\x18\x01 \x03(\x0b\x32\x15.ai_flow.DatasetProto\"\xfc\x04\n\x14UpdateDatasetRequest\x12\x0c\n\x04name\x18\x01 \x01(\t\x12\x41\n\nproperties\x18\x02 \x03(\x0b\x32-.ai_flow.UpdateDatasetRequest.PropertiesEntry\x12\x11\n\tname_list\x18\x03 \x03(\t\x12)\n\ttype_list\x18\x04 \x03(\x0e\x32\x16.ai_flow.DataTypeProto\x12\x31\n\x0b\x64\x61ta_format\x18\x05 \x01(\x0b\x32\x1c.google.protobuf.StringValue\x12)\n\x03uri\x18\x06 \x01(\x0b\x32\x1c.google.protobuf.StringValue\x12\x31\n\x0b\x64\x65scription\x18\x07 \x01(\x0b\x32\x1c.google.protobuf.StringValue\x12\x32\n\x0c\x63\x61talog_name\x18\t \x01(\x0b\x32\x1c.google.protobuf.StringValue\x12\x32\n\x0c\x63\x61talog_type\x18\n \x01(\x0b\x32\x1c.google.protobuf.StringValue\x12\x36\n\x10\x63\x61talog_database\x18\x0b \x01(\x0b\x32\x1c.google.protobuf.StringValue\x12<\n\x16\x63\x61talog_connection_uri\x18\x0c \x01(\x0b\x32\x1c.google.protobuf.StringValue\x12\x33\n\rcatalog_table\x18\r \x01(\x0b\x32\x1c.google.protobuf.StringValue\x1a\x31\n\x0fPropertiesEntry\x12\x0b\n\x03key\x18\x01 \x01(\t\x12\r\n\x05value\x18\x02 \x01(\t:\x02\x38\x01\"S\n\x1cRegisterModelRelationRequest\x12\x33\n\x0emodel_relation\x18\x01 \x01(\x0b\x32\x1b.ai_flow.ModelRelationProto\":\n\x14RegisterModelRequest\x12\"\n\x05model\x18\x01 \x01(\x0b\x32\x13.ai_flow.ModelProto\"N\n\x16ModelRelationListProto\x12\x34\n\x0fmodel_relations\x18\x01 \x03(\x0b\x32\x1b.ai_flow.ModelRelationProto\"i\n\x17ModelVersionNameRequest\x12\x0c\n\x04name\x18\x01 \x01(\t\x12\x10\n\x08model_id\x18\x02 \x01(\x03\x12.\n\x08job_name\x18\x03 \x01(\x0b\x32\x1c.google.protobuf.StringValue\"i\n#RegisterModelVersionRelationRequest\x12\x42\n\x16model_version_relation\x18\x01 \x01(\x0b\x32\".ai_flow.ModelVersionRelationProto\"P\n\x1bRegisterModelVersionRequest\x12\x31\n\rmodel_version\x18\x01 \x01(\x0b\x32\x1a.ai_flow.ModelVersionProto\"V\n\x1fListModelVersionRelationRequest\x12\x10\n\x08model_id\x18\x01 \x01(\x03\x12\x11\n\tpage_size\x18\x02 \x01(\x03\x12\x0e\n\x06offset\x18\x03 \x01(\x03\"[\n\x1dModelVersionRelationListProto\x12:\n\x0emodel_versions\x18\x01 \x03(\x0b\x32\".ai_flow.ModelVersionRelationProto\"K\n\x15ModelVersionListProto\x12\x32\n\x0emodel_versions\x18\x01 \x03(\x0b\x32\x1a.ai_flow.ModelVersionProto\" \n\x10ModelNameRequest\x12\x0c\n\x04name\x18\x01 \x01(\t\"@\n\x16RegisterProjectRequest\x12&\n\x07project\x18\x01 \x01(\x0b\x32\x15.ai_flow.ProjectProto\"\xc5\x01\n\x14UpdateProjectRequest\x12\x0c\n\x04name\x18\x01 \x01(\t\x12\x41\n\nproperties\x18\x02 \x03(\x0b\x32-.ai_flow.UpdateProjectRequest.PropertiesEntry\x12)\n\x03uri\x18\x03 \x01(\x0b\x32\x1c.google.protobuf.StringValue\x1a\x31\n\x0fPropertiesEntry\x12\x0b\n\x03key\x18\x01 \x01(\t\x12\r\n\x05value\x18\x02 \x01(\t:\x02\x38\x01\";\n\x10ProjectListProto\x12\'\n\x08projects\x18\x01 \x03(\x0b\x32\x15.ai_flow.ProjectProto\"C\n\x17RegisterArtifactRequest\x12(\n\x08\x61rtifact\x18\x01 \x01(\x0b\x32\x16.ai_flow.ArtifactProto\"\xaf\x02\n\x15UpdateArtifactRequest\x12\x0c\n\x04name\x18\x01 \x01(\t\x12\x42\n\nproperties\x18\x02 \x03(\x0b\x32..ai_flow.UpdateArtifactRequest.PropertiesEntry\x12\x33\n\rartifact_type\x18\x03 \x01(\x0b\x32\x1c.google.protobuf.StringValue\x12)\n\x03uri\x18\x04 \x01(\x0b\x32\x1c.google.protobuf.StringValue\x12\x31\n\x0b\x64\x65scription\x18\x05 \x01(\x0b\x32\x1c.google.protobuf.StringValue\x1a\x31\n\x0fPropertiesEntry\x12\x0b\n\x03key\x18\x01 \x01(\t\x12\r\n\x05value\x18\x02 \x01(\t:\x02\x38\x01\">\n\x11\x41rtifactListProto\x12)\n\tartifacts\x18\x01 \x03(\x0b\x32\x16.ai_flow.ArtifactProto2\x8c+\n\x0fMetadataService\x12i\n\x0egetDatasetById\x12\x12.ai_flow.IdRequest\x1a\x11.ai_flow.Response\"0\x82\xd3\xe4\x93\x02*\"%/aiflow/metadata_store/dataset/get/id:\x01*\x12o\n\x10getDatasetByName\x12\x14.ai_flow.NameRequest\x1a\x11.ai_flow.Response\"2\x82\xd3\xe4\x93\x02,\"\'/aiflow/metadata_store/dataset/get/name:\x01*\x12g\n\x0clistDatasets\x12\x14.ai_flow.ListRequest\x1a\x11.ai_flow.Response\".\x82\xd3\xe4\x93\x02(\"#/aiflow/metadata_store/dataset/list:\x01*\x12u\n\x0fregisterDataset\x12\x1f.ai_flow.RegisterDatasetRequest\x1a\x11.ai_flow.Response\".\x82\xd3\xe4\x93\x02(\"#/aiflow/metadata_store/dataset/save:\x01*\x12\x8d\x01\n\x1aregisterDatasetWithCatalog\x12\x1f.ai_flow.RegisterDatasetRequest\x1a\x11.ai_flow.Response\";\x82\xd3\xe4\x93\x02\x35\"0/aiflow/metadata_store/dataset/save_with_catalog:\x01*\x12w\n\x10registerDatasets\x12 .ai_flow.RegisterDatasetsRequest\x1a\x11.ai_flow.Response\".\x82\xd3\xe4\x93\x02(\"#/aiflow/metadata_store/dataset/save:\x01*\x12s\n\rupdateDataset\x12\x1d.ai_flow.UpdateDatasetRequest\x1a\x11.ai_flow.Response\"0\x82\xd3\xe4\x93\x02*\"%/aiflow/metadata_store/dataset/update:\x01*\x12o\n\x11\x64\x65leteDatasetById\x12\x12.ai_flow.IdRequest\x1a\x11.ai_flow.Response\"3\x82\xd3\xe4\x93\x02-\"(/aiflow/metadata_store/dataset/delete/id:\x01*\x12u\n\x13\x64\x65leteDatasetByName\x12\x14.ai_flow.NameRequest\x1a\x11.ai_flow.Response\"5\x82\xd3\xe4\x93\x02/\"*/aiflow/metadata_store/dataset/delete/name:\x01*\x12v\n\x14getModelRelationById\x12\x12.ai_flow.IdRequest\x1a\x11.ai_flow.Response\"7\x82\xd3\xe4\x93\x02\x31\",/aiflow/metadata_store/model_relation/get/id:\x01*\x12|\n\x16getModelRelationByName\x12\x14.ai_flow.NameRequest\x1a\x11.ai_flow.Response\"9\x82\xd3\xe4\x93\x02\x33\"./aiflow/metadata_store/model_relation/get/name:\x01*\x12s\n\x11listModelRelation\x12\x14.ai_flow.ListRequest\x1a\x11.ai_flow.Response\"5\x82\xd3\xe4\x93\x02/\"*/aiflow/metadata_store/model_relation/list:\x01*\x12\x88\x01\n\x15registerModelRelation\x12%.ai_flow.RegisterModelRelationRequest\x1a\x11.ai_flow.Response\"5\x82\xd3\xe4\x93\x02/\"*/aiflow/metadata_store/model_relation/save:\x01*\x12|\n\x17\x64\x65leteModelRelationById\x12\x12.ai_flow.IdRequest\x1a\x11.ai_flow.Response\":\x82\xd3\xe4\x93\x02\x34\"//aiflow/metadata_store/model_relation/delete/id:\x01*\x12\x82\x01\n\x19\x64\x65leteModelRelationByName\x12\x14.ai_flow.NameRequest\x1a\x11.ai_flow.Response\"<\x82\xd3\xe4\x93\x02\x36\"1/aiflow/metadata_store/model_relation/delete/name:\x01*\x12\x65\n\x0cgetModelById\x12\x12.ai_flow.IdRequest\x1a\x11.ai_flow.Response\".\x82\xd3\xe4\x93\x02(\"#/aiflow/metadata_store/model/get/id:\x01*\x12k\n\x0egetModelByName\x12\x14.ai_flow.NameRequest\x1a\x11.ai_flow.Response\"0\x82\xd3\xe4\x93\x02*\"%/aiflow/metadata_store/model/get/name:\x01*\x12o\n\rregisterModel\x12\x1d.ai_flow.RegisterModelRequest\x1a\x11.ai_flow.Response\",\x82\xd3\xe4\x93\x02&\"!/aiflow/metadata_store/model/save:\x01*\x12k\n\x0f\x64\x65leteModelById\x12\x12.ai_flow.IdRequest\x1a\x11.ai_flow.Response\"1\x82\xd3\xe4\x93\x02+\"&/aiflow/metadata_store/model/delete/id:\x01*\x12q\n\x11\x64\x65leteModelByName\x12\x14.ai_flow.NameRequest\x1a\x11.ai_flow.Response\"3\x82\xd3\xe4\x93\x02-\"(/aiflow/metadata_store/model/delete/name:\x01*\x12\x9c\x01\n getModelVersionRelationByVersion\x12 .ai_flow.ModelVersionNameRequest\x1a\x11.ai_flow.Response\"C\x82\xd3\xe4\x93\x02=\"8/aiflow/metadata_store/modelVersion_relation/get/version:\x01*\x12\x95\x01\n\x18listModelVersionRelation\x12(.ai_flow.ListModelVersionRelationRequest\x1a\x11.ai_flow.Response\"<\x82\xd3\xe4\x93\x02\x36\"1/aiflow/metadata_store/modelVersion_relation/list:\x01*\x12\x9d\x01\n\x1cregisterModelVersionRelation\x12,.ai_flow.RegisterModelVersionRelationRequest\x1a\x11.ai_flow.Response\"<\x82\xd3\xe4\x93\x02\x36\"1/aiflow/metadata_store/modelVersion_relation/save:\x01*\x12\xa2\x01\n#deleteModelVersionRelationByVersion\x12 .ai_flow.ModelVersionNameRequest\x1a\x11.ai_flow.Response\"F\x82\xd3\xe4\x93\x02@\";/aiflow/metadata_store/modelVersion_relation/delete/version:\x01*\x12\x8b\x01\n\x18getModelVersionByVersion\x12 .ai_flow.ModelVersionNameRequest\x1a\x11.ai_flow.Response\":\x82\xd3\xe4\x93\x02\x34\"//aiflow/metadata_store/modelVersion/get/version:\x01*\x12\x84\x01\n\x14registerModelVersion\x12$.ai_flow.RegisterModelVersionRequest\x1a\x11.ai_flow.Response\"3\x82\xd3\xe4\x93\x02-\"(/aiflow/metadata_store/modelVersion/save:\x01*\x12\x91\x01\n\x1b\x64\x65leteModelVersionByVersion\x12 .ai_flow.ModelVersionNameRequest\x1a\x11.ai_flow.Response\"=\x82\xd3\xe4\x93\x02\x37\"2/aiflow/metadata_store/modelVersion/delete/version:\x01*\x12\x8b\x01\n\x17getDeployedModelVersion\x12\x19.ai_flow.ModelNameRequest\x1a\x11.ai_flow.Response\"B\x82\xd3\xe4\x93\x02<\"7/aiflow/metadata_store/modelVersion/get_serving_version:\x01*\x12\xa1\x01\n\x1egetLatestValidatedModelVersion\x12\x19.ai_flow.ModelNameRequest\x1a\x11.ai_flow.Response\"Q\x82\xd3\xe4\x93\x02K\"F/aiflow/metadata_store/modelVersion/get_latest_validated_model_version:\x01*\x12\xa1\x01\n\x1egetLatestGeneratedModelVersion\x12\x19.ai_flow.ModelNameRequest\x1a\x11.ai_flow.Response\"Q\x82\xd3\xe4\x93\x02K\"F/aiflow/metadata_store/modelVersion/get_latest_generated_model_version:\x01*\x12i\n\x0egetProjectById\x12\x12.ai_flow.IdRequest\x1a\x11.ai_flow.Response\"0\x82\xd3\xe4\x93\x02*\"%/aiflow/metadata_store/project/get/id:\x01*\x12o\n\x10getProjectByName\x12\x14.ai_flow.NameRequest\x1a\x11.ai_flow.Response\"2\x82\xd3\xe4\x93\x02,\"\'/aiflow/metadata_store/project/get/name:\x01*\x12u\n\x0fregisterProject\x12\x1f.ai_flow.RegisterProjectRequest\x1a\x11.ai_flow.Response\".\x82\xd3\xe4\x93\x02(\"#/aiflow/metadata_store/project/save:\x01*\x12s\n\rupdateProject\x12\x1d.ai_flow.UpdateProjectRequest\x1a\x11.ai_flow.Response\"0\x82\xd3\xe4\x93\x02*\"%/aiflow/metadata_store/project/update:\x01*\x12\x66\n\x0blistProject\x12\x14.ai_flow.ListRequest\x1a\x11.ai_flow.Response\".\x82\xd3\xe4\x93\x02(\"#/aiflow/metadata_store/project/list:\x01*\x12o\n\x11\x64\x65leteProjectById\x12\x12.ai_flow.IdRequest\x1a\x11.ai_flow.Response\"3\x82\xd3\xe4\x93\x02-\"(/aiflow/metadata_store/project/delete/id:\x01*\x12u\n\x13\x64\x65leteProjectByName\x12\x14.ai_flow.NameRequest\x1a\x11.ai_flow.Response\"5\x82\xd3\xe4\x93\x02/\"*/aiflow/metadata_store/project/delete/name:\x01*\x12k\n\x0fgetArtifactById\x12\x12.ai_flow.IdRequest\x1a\x11.ai_flow.Response\"1\x82\xd3\xe4\x93\x02+\"&/aiflow/metadata_store/artifact/get/id:\x01*\x12q\n\x11getArtifactByName\x12\x14.ai_flow.NameRequest\x1a\x11.ai_flow.Response\"3\x82\xd3\xe4\x93\x02-\"(/aiflow/metadata_store/artifact/get/name:\x01*\x12v\n\x0eupdateArtifact\x12\x1e.ai_flow.UpdateArtifactRequest\x1a\x11.ai_flow.Response\"1\x82\xd3\xe4\x93\x02+\"&/aiflow/metadata_store/artifact/update:\x01*\x12x\n\x10registerArtifact\x12 .ai_flow.RegisterArtifactRequest\x1a\x11.ai_flow.Response\"/\x82\xd3\xe4\x93\x02)\"$/aiflow/metadata_store/artifact/save:\x01*\x12h\n\x0clistArtifact\x12\x14.ai_flow.ListRequest\x1a\x11.ai_flow.Response\"/\x82\xd3\xe4\x93\x02)\"$/aiflow/metadata_store/artifact/list:\x01*\x12q\n\x12\x64\x65leteArtifactById\x12\x12.ai_flow.IdRequest\x1a\x11.ai_flow.Response\"4\x82\xd3\xe4\x93\x02.\")/aiflow/metadata_store/artifact/delete/id:\x01*\x12w\n\x14\x64\x65leteArtifactByName\x12\x14.ai_flow.NameRequest\x1a\x11.ai_flow.Response\"6\x82\xd3\xe4\x93\x02\x30\"+/aiflow/metadata_store/artifact/delete/name:\x01*B\"\n\x10\x63om.aiflow.protoZ\x08/ai_flow\x88\x01\x01\x90\x01\x01\x62\x06proto3'
   ,
   dependencies=[google_dot_protobuf_dot_wrappers__pb2.DESCRIPTOR,message__pb2.DESCRIPTOR,google_dot_api_dot_annotations__pb2.DESCRIPTOR,])
 
@@ -560,6 +560,13 @@ _MODELVERSIONNAMEREQUEST = _descriptor.Descriptor(
       message_type=None, enum_type=None, containing_type=None,
       is_extension=False, extension_scope=None,
       serialized_options=None, file=DESCRIPTOR,  create_key=_descriptor._internal_create_key),
+    _descriptor.FieldDescriptor(
+      name='job_name', full_name='ai_flow.ModelVersionNameRequest.job_name', index=2,
+      number=3, type=11, cpp_type=10, label=1,
+      has_default_value=False, default_value=None,
+      message_type=None, enum_type=None, containing_type=None,
+      is_extension=False, extension_scope=None,
+      serialized_options=None, file=DESCRIPTOR,  create_key=_descriptor._internal_create_key),
   ],
   extensions=[
   ],
@@ -573,7 +580,7 @@ _MODELVERSIONNAMEREQUEST = _descriptor.Descriptor(
   oneofs=[
   ],
   serialized_start=1346,
-  serialized_end=1403,
+  serialized_end=1451,
 )
 
 
@@ -604,8 +611,8 @@ _REGISTERMODELVERSIONRELATIONREQUEST = _descriptor.Descriptor(
   extension_ranges=[],
   oneofs=[
   ],
-  serialized_start=1405,
-  serialized_end=1510,
+  serialized_start=1453,
+  serialized_end=1558,
 )
 
 
@@ -636,8 +643,8 @@ _REGISTERMODELVERSIONREQUEST = _descriptor.Descriptor(
   extension_ranges=[],
   oneofs=[
   ],
-  serialized_start=1512,
-  serialized_end=1592,
+  serialized_start=1560,
+  serialized_end=1640,
 )
 
 
@@ -682,8 +689,8 @@ _LISTMODELVERSIONRELATIONREQUEST = _descriptor.Descriptor(
   extension_ranges=[],
   oneofs=[
   ],
-  serialized_start=1594,
-  serialized_end=1680,
+  serialized_start=1642,
+  serialized_end=1728,
 )
 
 
@@ -714,8 +721,8 @@ _MODELVERSIONRELATIONLISTPROTO = _descriptor.Descriptor(
   extension_ranges=[],
   oneofs=[
   ],
-  serialized_start=1682,
-  serialized_end=1773,
+  serialized_start=1730,
+  serialized_end=1821,
 )
 
 
@@ -746,8 +753,8 @@ _MODELVERSIONLISTPROTO = _descriptor.Descriptor(
   extension_ranges=[],
   oneofs=[
   ],
-  serialized_start=1775,
-  serialized_end=1850,
+  serialized_start=1823,
+  serialized_end=1898,
 )
 
 
@@ -778,8 +785,8 @@ _MODELNAMEREQUEST = _descriptor.Descriptor(
   extension_ranges=[],
   oneofs=[
   ],
-  serialized_start=1852,
-  serialized_end=1884,
+  serialized_start=1900,
+  serialized_end=1932,
 )
 
 
@@ -810,8 +817,8 @@ _REGISTERPROJECTREQUEST = _descriptor.Descriptor(
   extension_ranges=[],
   oneofs=[
   ],
-  serialized_start=1886,
-  serialized_end=1950,
+  serialized_start=1934,
+  serialized_end=1998,
 )
 
 
@@ -894,8 +901,8 @@ _UPDATEPROJECTREQUEST = _descriptor.Descriptor(
   extension_ranges=[],
   oneofs=[
   ],
-  serialized_start=1953,
-  serialized_end=2150,
+  serialized_start=2001,
+  serialized_end=2198,
 )
 
 
@@ -926,8 +933,8 @@ _PROJECTLISTPROTO = _descriptor.Descriptor(
   extension_ranges=[],
   oneofs=[
   ],
-  serialized_start=2152,
-  serialized_end=2211,
+  serialized_start=2200,
+  serialized_end=2259,
 )
 
 
@@ -958,8 +965,8 @@ _REGISTERARTIFACTREQUEST = _descriptor.Descriptor(
   extension_ranges=[],
   oneofs=[
   ],
-  serialized_start=2213,
-  serialized_end=2280,
+  serialized_start=2261,
+  serialized_end=2328,
 )
 
 
@@ -1056,8 +1063,8 @@ _UPDATEARTIFACTREQUEST = _descriptor.Descriptor(
   extension_ranges=[],
   oneofs=[
   ],
-  serialized_start=2283,
-  serialized_end=2586,
+  serialized_start=2331,
+  serialized_end=2634,
 )
 
 
@@ -1088,8 +1095,8 @@ _ARTIFACTLISTPROTO = _descriptor.Descriptor(
   extension_ranges=[],
   oneofs=[
   ],
-  serialized_start=2588,
-  serialized_end=2650,
+  serialized_start=2636,
+  serialized_end=2698,
 )
 
 _REGISTERDATASETREQUEST.fields_by_name['dataset'].message_type = message__pb2._DATASETPROTO
@@ -1109,6 +1116,7 @@ _UPDATEDATASETREQUEST.fields_by_name['catalog_table'].message_type = google_dot_
 _REGISTERMODELRELATIONREQUEST.fields_by_name['model_relation'].message_type = message__pb2._MODELRELATIONPROTO
 _REGISTERMODELREQUEST.fields_by_name['model'].message_type = message__pb2._MODELPROTO
 _MODELRELATIONLISTPROTO.fields_by_name['model_relations'].message_type = message__pb2._MODELRELATIONPROTO
+_MODELVERSIONNAMEREQUEST.fields_by_name['job_name'].message_type = google_dot_protobuf_dot_wrappers__pb2._STRINGVALUE
 _REGISTERMODELVERSIONRELATIONREQUEST.fields_by_name['model_version_relation'].message_type = message__pb2._MODELVERSIONRELATIONPROTO
 _REGISTERMODELVERSIONREQUEST.fields_by_name['model_version'].message_type = message__pb2._MODELVERSIONPROTO
 _MODELVERSIONRELATIONLISTPROTO.fields_by_name['model_versions'].message_type = message__pb2._MODELVERSIONRELATIONPROTO
@@ -1356,8 +1364,8 @@ _METADATASERVICE = _descriptor.ServiceDescriptor(
   index=0,
   serialized_options=None,
   create_key=_descriptor._internal_create_key,
-  serialized_start=2653,
-  serialized_end=8169,
+  serialized_start=2701,
+  serialized_end=8217,
   methods=[
   _descriptor.MethodDescriptor(
     name='getDatasetById',

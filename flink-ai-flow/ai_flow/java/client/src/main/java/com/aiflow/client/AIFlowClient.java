@@ -441,6 +441,7 @@ public class AIFlowClient {
    * @param versionDesc Description of registered model version.
    * @param modelId Model id corresponded to model version.
    * @param projectSnapshotId Project snapshot id corresponded to model version.
+   * @param jobName Name of the job that registers model version.
    * @return Single ModelVersionRelationMeta object registered in Metadata Store.
    */
   public ModelVersionMeta registerModelVersion(
@@ -448,10 +449,11 @@ public class AIFlowClient {
       String modelType,
       String versionDesc,
       Long modelId,
-      Long projectSnapshotId)
+      Long projectSnapshotId,
+      String jobName)
       throws Exception {
     return this.metadataClient.registerModelVersion(
-        modelPath, modelType, versionDesc, modelId, projectSnapshotId);
+        modelPath, modelType, versionDesc, modelId, projectSnapshotId, jobName);
   }
 
   /**
@@ -459,11 +461,12 @@ public class AIFlowClient {
    *
    * @param version Name of model version.
    * @param modelId Model id corresponded to model version.
+   * @param jobName Name of the job that deletes model version.
    * @return Status.OK if model version is successfully deleted, Status.ERROR if model version does
    *     not exist otherwise.
    */
-  public Status deleteModelVersionByVersion(String version, Long modelId) throws Exception {
-    return this.metadataClient.deleteModelVersionByVersion(version, modelId);
+  public Status deleteModelVersionByVersion(String version, Long modelId, String jobName) throws Exception {
+    return this.metadataClient.deleteModelVersionByVersion(version, modelId, jobName);
   }
 
   /**
@@ -997,16 +1000,18 @@ public class AIFlowClient {
    * @param modelPath Source path where the AIFlow model is stored.
    * @param modelType (Optional) Type of AIFlow registered model option.
    * @param versionDesc (Optional) Description of registered model version.
+   * @param jobName (Optional) Name of the job that registers model version.
    * @return Object of ModelVersion created in Model Center.
    */
   public ModelVersion createModelVersion(
       String modelName,
       String modelPath,
       String modelType,
-      String versionDesc)
+      String versionDesc,
+      String jobName)
       throws Exception {
     return this.modelCenterClient.createModelVersion(
-        modelName, modelPath, modelType, versionDesc);
+        modelName, modelPath, modelType, versionDesc, jobName);
   }
 
   /**
@@ -1020,6 +1025,7 @@ public class AIFlowClient {
    * @param modelType (Optional) Type of AIFlow registered model option.
    * @param versionDesc (Optional) Description of registered model version.
    * @param currentStage (Optional) Current stage for registered model version.
+   * @param jobName (Optional) Name of the job that updates model version.
    * @return Object of ModelVersion updated in Model Center.
    */
   public ModelVersion updateModelVersion(
@@ -1028,10 +1034,11 @@ public class AIFlowClient {
       String modelPath,
       String modelType,
       String versionDesc,
-      ModelStage currentStage)
+      ModelStage currentStage,
+      String jobName)
       throws Exception {
     return this.modelCenterClient.updateModelVersion(
-        modelName, modelVersion, modelPath, modelType, versionDesc, currentStage);
+        modelName, modelVersion, modelPath, modelType, versionDesc, currentStage, jobName);
   }
 
   /**
@@ -1039,10 +1046,11 @@ public class AIFlowClient {
    *
    * @param modelName Name of registered model. This is expected to be unique in the backend store.
    * @param modelVersion User-defined version of registered model.
+   * @param jobName (Optional) Name of the job that deletes model version.
    * @return Object of ModelVersion deleted in Model Center.
    */
-  public ModelVersion deleteModelVersion(String modelName, String modelVersion) throws Exception {
-    return this.modelCenterClient.deleteModelVersion(modelName, modelVersion);
+  public ModelVersion deleteModelVersion(String modelName, String modelVersion, String jobName) throws Exception {
+    return this.modelCenterClient.deleteModelVersion(modelName, modelVersion, jobName);
   }
 
   /**

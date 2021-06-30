@@ -458,12 +458,13 @@ public class MetadataClient {
      * @param versionDesc         Description of registered model version.
      * @param modelId             Model id corresponded to model version.
      * @param projectSnapshotId   Project snapshot id corresponded to model version.
+     * @param jobName           Name of the job that registers model version.
      * @return Single ModelVersionRelationMeta object registered in Metadata Store.
      */
-    public ModelVersionMeta registerModelVersion(String modelPath, String modelType, String versionDesc, Long modelId, Long projectSnapshotId) throws Exception {
+    public ModelVersionMeta registerModelVersion(String modelPath, String modelType, String versionDesc, Long modelId, Long projectSnapshotId, String jobName) throws Exception {
         ModelVersionProto modelVersionProto = ModelVersionProto.newBuilder().setModelPath(stringValue(modelPath))
                 .setModelType(stringValue(modelType))
-                .setVersionDesc(stringValue(versionDesc)).setModelId(int64Value(modelId)).setProjectSnapshotId(int64Value(projectSnapshotId)).build();
+                .setVersionDesc(stringValue(versionDesc)).setModelId(int64Value(modelId)).setProjectSnapshotId(int64Value(projectSnapshotId)).setJobName(stringValue(jobName)).build();
         RegisterModelVersionRequest request = RegisterModelVersionRequest.newBuilder().setModelVersion(modelVersionProto).build();
         Response response = metadataServiceStub.registerModelVersion(request);
         ModelVersionProto.Builder builder = ModelVersionProto.newBuilder();
@@ -475,9 +476,10 @@ public class MetadataClient {
      *
      * @param version Name of model version.
      * @param modelId Model id corresponded to model version.
+     * @param jobName Name of the job that deletes model version.
      * @return Status.OK if model version is successfully deleted, Status.ERROR if model version does not exist otherwise.
      */
-    public Status deleteModelVersionByVersion(String version, Long modelId) throws Exception {
+    public Status deleteModelVersionByVersion(String version, Long modelId, String jobName) throws Exception {
         ModelVersionNameRequest request = ModelVersionNameRequest.newBuilder().setName(version).setModelId(modelId).build();
         Response response = metadataServiceStub.deleteModelVersionByVersion(request);
         return metadataDeleteResponse(response);

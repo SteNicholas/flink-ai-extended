@@ -375,6 +375,7 @@ message ModelRelationListProto {
 message ModelVersionNameRequest {
     string name = 1;
     int64 model_id = 2;
+    google.protobuf.StringValue job_name = 3;
 }
 
 message RegisterModelVersionRelationRequest {

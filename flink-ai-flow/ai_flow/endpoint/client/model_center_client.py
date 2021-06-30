@@ -117,7 +117,7 @@ class ModelCenterClient(BaseClient):
         return RegisteredModelDetail.from_detail_proto(_parse_response(response, ProtoModelDetail()))
 
     def create_model_version(self, model_name, model_path, model_type=None, version_desc=None,
-                             current_stage=ModelVersionStage.GENERATED) -> Optional[ModelVersionDetail]:
+                             current_stage=ModelVersionStage.GENERATED, job_name=None) -> Optional[ModelVersionDetail]:
         """
         Create a new model version from given source and metric in Model Center.
 
@@ -126,20 +126,22 @@ class ModelCenterClient(BaseClient):
         :param model_type: (Optional) Type of AIFlow registered model option.
         :param version_desc: (Optional) Description of registered model version.
         :param current_stage: (Optional) Stage of registered model version.
+        :param job_name: (Optional) Name of the job that registers model version.
 
         :return: A single object of :py:class:`ai_flow.model_center.entity.ModelVersionDetail` created in
         model repository.
         """
-        request = CreateModelVersionRequest(model_meta=ModelMetaParam(model_name=stringValue(model_name)),
-                                            model_version=ModelVersionParam(model_path=stringValue(model_path),
-                                                                            model_type=stringValue(model_type),
-                                                                            version_desc=stringValue(version_desc),
-                                                                            current_stage=current_stage))
+        request = CreateModelVersionRequest(
+            model_meta=ModelMetaParam(model_name=stringValue(model_name), job_name=stringValue(job_name)),
+            model_version=ModelVersionParam(model_path=stringValue(model_path),
+                                            model_type=stringValue(model_type),
+                                            version_desc=stringValue(version_desc),
+                                            current_stage=current_stage))
         response = self.model_center_stub.createModelVersion(request)
         return ModelVersionDetail.from_proto(_parse_response(response, ModelVersionMeta()))
 
     def update_model_version(self, model_name, model_version, model_path=None, model_type=None,
-                             version_desc=None, current_stage=None) -> Optional[ModelVersionDetail]:
+                             version_desc=None, current_stage=None, job_name=None) -> Optional[ModelVersionDetail]:
         """
         Update metadata for ModelVersion entity and metadata associated with a model version in backend.
         Either ``model_path`` or ``model_type`` or ``version_desc`` should be non-None.
@@ -151,11 +153,13 @@ class ModelCenterClient(BaseClient):
         :param model_type: (Optional) Type of AIFlow registered model option.
         :param version_desc: (Optional) Description of registered model version.
         :param current_stage: (Optional) Current stage of registered model version.
+        :param job_name: (Optional) Name of the job that updates model version.
 
         :return: A single updated :py:class:`ai_flow.model_center.entity.ModelVersionDetail` object.
         """
         request = UpdateModelVersionRequest(
-            model_meta=ModelMetaParam(model_name=stringValue(model_name), model_version=stringValue(model_version)),
+            model_meta=ModelMetaParam(model_name=stringValue(model_name), model_version=stringValue(model_version),
+                                      job_name=stringValue(job_name)),
             model_version=ModelVersionParam(model_path=stringValue(model_path),
                                             model_type=stringValue(model_type),
                                             version_desc=stringValue(version_desc),
@@ -163,17 +167,19 @@ class ModelCenterClient(BaseClient):
         response = self.model_center_stub.updateModelVersion(request)
         return ModelVersionDetail.from_proto(_parse_response(response, ModelVersionMeta()))
 
-    def delete_model_version(self, model_name, model_version) -> ModelVersion:
+    def delete_model_version(self, model_name, model_version, job_name=None) -> ModelVersion:
         """
         Delete model version by model name and version in Model Center backend.
 
         :param model_name: Name of registered model. This is expected to be unique in the backend store.
         :param model_version: User-defined version of registered model.
+        :param job_name: (Optional) Name of the job that deletes model version.
 
         :return: A single :py:class:`ai_flow.entities.model_registry.ModelVersion` object.
         """
         request = DeleteModelVersionRequest(model_meta=ModelMetaParam(model_name=stringValue(model_name),
-                                                                      model_version=stringValue(model_version)))
+                                                                      model_version=stringValue(model_version),
+                                                                      job_name=stringValue(job_name)))
         response = self.model_center_stub.deleteModelVersion(request)
         return ModelVersion.from_resp_proto(_parse_response(response, ModelMetaParam()))
 

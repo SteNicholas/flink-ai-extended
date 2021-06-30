@@ -433,8 +433,8 @@ class MetadataClient(BaseClient):
         return _unwrap_model_version_response(response)
 
     def register_model_version(self, model, model_path, project_snapshot_id=None,
-                               model_type=None, version_desc=None,
-                               current_stage=ModelVersionStage.GENERATED) -> ModelVersionMeta:
+                               model_type=None, version_desc=None, current_stage=ModelVersionStage.GENERATED,
+                               job_name=None) -> ModelVersionMeta:
         """
         register a model version in metadata store.
 
@@ -444,6 +444,7 @@ class MetadataClient(BaseClient):
         :param model_type: (Optional) Type of AIFlow registered model option.
         :param version_desc: (Optional) Description of registered model version.
         :param current_stage: (Optional) Stage of registered model version
+        :param job_name: (Optional) Name of the job that registers model version.
         :return: A single :py:class:`ai_flow.meta.model_meta.ModelVersionMeta` object.
         """
 
@@ -459,21 +460,24 @@ class MetadataClient(BaseClient):
                                           model_path=stringValue(model_path),
                                           model_type=stringValue(model_type),
                                           version_desc=stringValue(version_desc),
-                                          current_stage=current_stage)
+                                          current_stage=current_stage,
+                                          job_name=stringValue(job_name))
         request = metadata_service_pb2.RegisterModelVersionRequest(model_version=model_version)
         response = self.metadata_store_stub.registerModelVersion(request)
         return _unwrap_model_version_response(response)
 
-    def delete_model_version_by_version(self, version, model_id) -> Status:
+    def delete_model_version_by_version(self, version, model_id, job_name=None) -> Status:
         """
         Delete registered model version by model version name .
 
         :param version: the model version name
         :param model_id: the model id corresponded to the model version
+        :param job_name: (Optional) the name of the job that deletes model version
         :return: Status.OK if the model version is successfully deleted,
                  Status.ERROR if the model version does not exist otherwise.
         """
-        request = metadata_service_pb2.ModelVersionNameRequest(name=version, model_id=model_id)
+        request = metadata_service_pb2.ModelVersionNameRequest(name=version, model_id=model_id,
+                                                               job_name=stringValue(job_name))
         response = self.metadata_store_stub.deleteModelVersionByVersion(request)
         return _unwrap_delete_response(response)
 

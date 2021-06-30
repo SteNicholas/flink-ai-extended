@@ -158,18 +158,17 @@ def get_model_version_by_version(version, model_id) -> Optional[ModelVersionMeta
 
 
 def register_model_version(model, model_path, model_type=None, version_desc=None,
-                           current_stage=ModelVersionStage.GENERATED) -> ModelVersionMeta:
-    workflow_execution_id = get_workflow_execution_id()
+                           current_stage=ModelVersionStage.GENERATED, job_name=None) -> ModelVersionMeta:
     if isinstance(model, str):
         model_meta_info = get_ai_flow_client().get_model_by_name(model)
     else:
         model_meta_info = model
-    return get_ai_flow_client().register_model_version(model_meta_info, model_path, workflow_execution_id,
-                                                       model_type, version_desc, current_stage)
+    return get_ai_flow_client().register_model_version(model_meta_info, model_path, None,
+                                                       model_type, version_desc, current_stage, job_name)
 
 
-def delete_model_version_by_version(version, model_id) -> Status:
-    return get_ai_flow_client().delete_model_version_by_version(version, model_id)
+def delete_model_version_by_version(version, model_id, job_name=None) -> Status:
+    return get_ai_flow_client().delete_model_version_by_version(version, model_id, job_name)
 
 
 def get_deployed_model_version(model_name) -> ModelVersionMeta:
@@ -266,19 +265,20 @@ def get_registered_model_detail(model_name) -> Optional[RegisteredModelDetail]:
 
 
 def create_model_version(model_name, model_path, model_type=None,
-                         version_desc=None, current_stage=ModelVersionStage.GENERATED) -> Optional[ModelVersionDetail]:
+                         version_desc=None, current_stage=ModelVersionStage.GENERATED, job_name=None) \
+        -> Optional[ModelVersionDetail]:
     return get_ai_flow_client().create_model_version(model_name, model_path, model_type, version_desc,
-                                                     current_stage)
+                                                     current_stage, job_name)
 
 
 def update_model_version(model_name, model_version, model_path=None, model_type=None,
-                         version_desc=None, current_stage=None) -> Optional[ModelVersionDetail]:
+                         version_desc=None, current_stage=None, job_name=None) -> Optional[ModelVersionDetail]:
     return get_ai_flow_client().update_model_version(model_name, model_version, model_path,
-                                                     model_type, version_desc, current_stage)
+                                                     model_type, version_desc, current_stage, job_name)
 
 
-def delete_model_version(model_name, model_version) -> Status:
-    return get_ai_flow_client().delete_model_version_by_version(model_name, model_version)
+def delete_model_version(model_name, model_version, job_name=None) -> Status:
+    return get_ai_flow_client().delete_model_version(model_name, model_version, job_name)
 
 
 def get_model_version_detail(model_name, model_version) -> Optional[ModelVersionDetail]:
