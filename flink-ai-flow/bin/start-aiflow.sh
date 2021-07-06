@@ -79,13 +79,15 @@ mkdir ${AIFLOW_LOG_DIR} >/dev/null 2>&1 || true
 start_notification_service.py --database-conn=${MYSQL_CONN} > ${AIFLOW_LOG_DIR}/notification_service.log 2>&1 &
 echo $! > ${AIFLOW_PID_DIR}/notification_service.pid
 
+# start aiflow service
+start_aiflow.py > ${AIFLOW_LOG_DIR}/master_server.log 2>&1 &
+echo $! > ${AIFLOW_PID_DIR}/master_server.pid
+
 # start airflow scheduler and web server
 airflow event_scheduler --subdir=${AIRFLOW_DEPLOY_PATH} > ${AIFLOW_LOG_DIR}/scheduler.log 2>&1 &
 echo $! > ${AIFLOW_PID_DIR}/scheduler.pid
 airflow webserver -p 8080 > ${AIFLOW_LOG_DIR}/web.log 2>&1 &
 echo $! > ${AIFLOW_PID_DIR}/web.pid
-start_aiflow.py > ${AIFLOW_LOG_DIR}/master_server.log 2>&1 &
-echo $! > ${AIFLOW_PID_DIR}/master_server.pid
 
 echo "Notification service log: ${AIFLOW_LOG_DIR}/notification_service.log"
 echo "Notification service pid: $(cat ${AIFLOW_PID_DIR}/notification_service.pid)"

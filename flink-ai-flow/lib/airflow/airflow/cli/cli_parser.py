@@ -154,6 +154,13 @@ ARG_SERVER_URI = Arg(
     ),
     default='localhost:50052'
 )
+ARG_AI_FLOW_SERVER_URI = Arg(
+    ("--ai-flow-server-uri",),
+    help=(
+        "AIFlow service server uri."
+    ),
+    default='localhost:50051'
+)
 ARG_START_DATE = Arg(("-s", "--start-date"), help="Override start_date YYYY-MM-DD", type=parsedate)
 ARG_END_DATE = Arg(("-e", "--end-date"), help="Override end_date YYYY-MM-DD", type=parsedate)
 ARG_OUTPUT_PATH = Arg(
@@ -1422,6 +1429,7 @@ airflow_commands: List[CLICommand] = [
             ARG_SSL_KEY,
             ARG_DEBUG,
             ARG_SERVER_URI,
+            ARG_AI_FLOW_SERVER_URI,
         ),
     ),
     ActionCommand(

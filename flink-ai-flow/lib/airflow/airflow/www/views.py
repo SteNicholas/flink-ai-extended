@@ -35,7 +35,6 @@ import lazy_object_proxy
 import nvd3
 import sqlalchemy as sqla
 import yaml
-from airflow.contrib.jobs.scheduler_factory import SchedulerFactory
 from flask import (
     Markup,
     Response,
@@ -67,6 +66,7 @@ from wtforms import SelectField, validators
 from wtforms.validators import InputRequired
 
 import airflow
+from ai_flow.client.ai_flow_client import AIFlowClient
 from airflow import models, plugins_manager, settings
 from airflow.api.common.experimental.mark_tasks import (
     set_dag_run_state_to_failed,
@@ -165,19 +165,23 @@ def get_date_time_num_runs_dag_runs_form_data(www_request, session, dag):
         .all()
     )
     dr_choices = []
+    dr_id = None
     dr_state = None
     for dr in drs:
         dr_choices.append((dr.execution_date.isoformat(), dr.run_id))
         if date_time == dr.execution_date:
+            dr_id = dr.run_id
             dr_state = dr.state
 
     # Happens if base_date was changed and the selected dag run is not in result
     if not dr_state and drs:
         dr = drs[0]
+        dr_id = dr.run_id
         date_time = dr.execution_date
         dr_state = dr.state
 
     return {
+        'dr_id': dr_id,
         'dttm': date_time,
         'base_date': base_date,
         'num_runs': num_runs,
@@ -428,11 +432,10 @@ class AirflowBaseView(BaseView):  # noqa: D101
     }
 
     def render_template(self, *args, **kwargs):
-        scheduler_class = SchedulerFactory.get_default_scheduler()
         return super().render_template(
             *args,
             # Cache this at most once per request, not for the lifetime of the view instance
-            scheduler_job=lazy_object_proxy.Proxy(scheduler_class.most_recent_job),
+            scheduler_job=lazy_object_proxy.Proxy(SchedulerJob.most_recent_job),
             **kwargs,
         )
 
@@ -440,11 +443,12 @@ class AirflowBaseView(BaseView):  # noqa: D101
 class Airflow(AirflowBaseView):  # noqa: D101  pylint: disable=too-many-public-methods
     """Main Airflow application."""
 
-    def __init__(self, server_uri=None, **kwargs):
+    def __init__(self, server_uri=None, ai_flow_server_uri=None, **kwargs):
         super().__init__(**kwargs)
         if server_uri:
             self.notification_client: NotificationClient = NotificationClient(server_uri, SCHEDULER_NAMESPACE)
             self.scheduler_client: EventSchedulerClient = EventSchedulerClient(ns_client=self.notification_client)
+            self.aiflow_client: AIFlowClient = AIFlowClient(server_uri=ai_flow_server_uri)
 
     @expose('/health')
     def health(self):
@@ -458,8 +462,7 @@ class Airflow(AirflowBaseView):  # noqa: D101  pylint: disable=too-many-public-m
         scheduler_status = 'unhealthy'
         payload['metadatabase'] = {'status': 'healthy'}
         try:
-            scheduler_class = SchedulerFactory.get_default_scheduler()
-            scheduler_job = scheduler_class.most_recent_job()
+            scheduler_job = SchedulerJob.most_recent_job()
 
             if scheduler_job:
                 latest_scheduler_heartbeat = scheduler_job.latest_heartbeat.isoformat()
@@ -2182,6 +2185,14 @@ class Airflow(AirflowBaseView):  # noqa: D101  pylint: disable=too-many-public-m
                 'task_type': t.task_type,
                 'extra_links': t.extra_links,
             }
+            if t.task_id in task_instances and dt_nr_dr_data['dr_id']:
+                label_name = '_'.join([dag_id, dt_nr_dr_data['dr_id'], t.task_id, task_instances[t.task_id].try_number])
+                execution_label = self.aiflow_client.get_execution_label(label_name)
+                logging.info(
+                    'Execution label of dag ({}) run ({}) is {}.'.format(dag_id, dt_nr_dr_data['dr_id'],
+                                                                         execution_label))
+                if execution_label and execution_label.value:
+                    task_instances[t.task_id].update({'execution_label': execution_label.value})
             if t.task_id in task_instances and t.executor_config is not None and 'periodic_config' in t.executor_config:
                 task_instances[t.task_id].update({'periodic_config': t.executor_config['periodic_config']})
             if t.get_subscribed_events():
@@ -2766,7 +2777,8 @@ class Airflow(AirflowBaseView):  # noqa: D101  pylint: disable=too-many-public-m
         ]
     )
     @action_logging
-    def nodes(self):
+    @provide_session
+    def nodes(self, session=None):
         """Shows task instances."""
         dag_id = request.args.get('dag_id')
         dag = current_app.dag_bag.get_dag(dag_id)
@@ -2777,10 +2789,24 @@ class Airflow(AirflowBaseView):  # noqa: D101  pylint: disable=too-many-public-m
         else:
             return "Error: Invalid execution_date"
 
+        dag_run = session.query(DagRun).filter(
+            DagRun.dag_id == dag_id,
+            DagRun.execution_date == dttm,
+        ).first()
+
         task_instances = {ti.task_id: alchemy_to_dict(ti) for ti in dag.get_task_instances(dttm, dttm)}
 
         events: Dict[str, Tuple[str, str, str]] = {}
         for t in dag.tasks:
+            if t.task_id in task_instances and dag_run:
+                label_name = '_'.join([dag_id, dag_run.run_id, t.task_id, task_instances[t.task_id].try_number])
+                execution_label = self.aiflow_client.get_execution_label(label_name)
+                logging.info(
+                    'Execution label of dag ({}) run ({}) is {}.'.format(dag_id, dag_run.run_id, execution_label))
+                if execution_label and execution_label.value:
+                    task_instances[t.task_id].update({'execution_label': execution_label.value})
+            if t.task_id in task_instances and t.executor_config is not None and 'periodic_config' in t.executor_config:
+                task_instances[t.task_id].update({'periodic_config': t.executor_config['periodic_config']})
             if t.get_subscribed_events():
                 for event_namespace, event_key, event_type, from_task_id in BaseSerialization._deserialize(
                         t.get_subscribed_events()):
