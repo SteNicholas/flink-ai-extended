@@ -84,7 +84,7 @@ def _set_job_plugins(workflow: Workflow):
 def _apply_full_info_to_workflow(workflow: Workflow, entry_module_path: Text):
     """
     Applies the full information to the specified :class:`~ai_flow.workflow.workflow.Workflow` with the given entry
-    module path. The application of the workflow full information sets the entry module path, upload the project
+    module path. The application of the workflow full information sets the entry module path, uploads the project
     package of the workflow and set the registered job plugins.
 
     :param workflow: The generated :class:`~ai_flow.workflow.workflow.Workflow`.
@@ -103,7 +103,7 @@ def submit_workflow(workflow_name: Text = None) -> WorkflowInfo:
 
     The submission of workflow translates the current :class:`~ai_flow.ai_graph.ai_graph.AIGraph` , uploads the
     project package, registers the metadata of the specified workflow and submits the workflow by Scheduler Service
-    which assigns the submission to the :class:`~ai_flow.plugin_interface.scheduler_interface.Scheduler`.
+    which delegates the submission to the :class:`~ai_flow.plugin_interface.scheduler_interface.Scheduler`.
 
     :param workflow_name: The name of the workflow.
     :return: The :class:`~ai_flow.plugin_interface.scheduler_interface.WorkflowInfo` which contains the information
@@ -229,7 +229,7 @@ def start_new_workflow_execution(workflow_name: Text) -> WorkflowExecutionInfo:
 def stop_all_workflow_executions(workflow_name: Text) -> List[WorkflowExecutionInfo]:
     """
     Stops the workflow executions by the scheduler with the given name of workflow. The stop of the workflow execution
-    is assigned to the :class:`~ai_flow.plugin_interface.scheduler_interface.Scheduler` in Scheduler Service, that stop
+    is assigned to the :class:`~ai_flow.plugin_interface.scheduler_interface.Scheduler` in Scheduler Service, that stops
     the workflow running.
 
     :param workflow_name: The name of the workflow.
