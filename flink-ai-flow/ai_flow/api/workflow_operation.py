@@ -14,31 +14,26 @@
 # KIND, either express or implied.  See the License for the
 # specific language governing permissions and limitations
 # under the License.
-import time
 from typing import Text, List, Optional
 
-from ai_flow.util.json_utils import Jsonable
-
-from ai_flow.common.status import Status
-
-from ai_flow.meta.project_meta import ProjectMeta
-
-from ai_flow.meta.workflow_meta import WorkflowMeta
-from ai_flow.exception.exceptions import EmptyGraphException
-from ai_flow.plugin_interface.blob_manager_interface import BlobManagerFactory
-from ai_flow.util import json_utils
 from ai_flow.ai_graph.ai_graph import current_graph
-from ai_flow.translator.translator import get_translator
 from ai_flow.client.ai_flow_client import get_ai_flow_client
+from ai_flow.common.status import Status
 from ai_flow.context.project_context import current_project_config, current_project_context
 from ai_flow.context.workflow_config_loader import current_workflow_config
+from ai_flow.endpoint.server.workflow_proto_utils import \
+    proto_to_workflow, proto_to_workflow_execution, proto_to_workflow_execution_list, \
+    proto_to_job, proto_to_job_list
+from ai_flow.exception.exceptions import EmptyGraphException
+from ai_flow.meta.project_meta import ProjectMeta
+from ai_flow.meta.workflow_meta import WorkflowMeta
+from ai_flow.plugin_interface.blob_manager_interface import BlobManagerFactory
+from ai_flow.plugin_interface.job_plugin_interface import get_registered_job_plugin_factory_list
+from ai_flow.plugin_interface.scheduler_interface import JobExecutionInfo, WorkflowExecutionInfo, WorkflowInfo
+from ai_flow.translator.translator import get_translator
+from ai_flow.util import json_utils
 from ai_flow.workflow.job import Job
 from ai_flow.workflow.workflow import Workflow, WorkflowPropertyKeys
-from ai_flow.plugin_interface.scheduler_interface import JobExecutionInfo, WorkflowExecutionInfo, WorkflowInfo
-from ai_flow.plugin_interface.job_plugin_interface import get_registered_job_plugin_factory_list
-from ai_flow.endpoint.server.workflow_proto_utils import \
-    proto_to_workflow, proto_to_workflow_list, proto_to_workflow_execution, proto_to_workflow_execution_list, \
-    proto_to_job, proto_to_job_list
 
 
 def _upload_project_package(workflow: Workflow):
@@ -55,7 +50,7 @@ def _upload_project_package(workflow: Workflow):
     workflow.properties[WorkflowPropertyKeys.BLOB] = current_project_config().get(WorkflowPropertyKeys.BLOB)
 
 
-def _set_entry_module_path(workflow: Workflow, entry_module_path: Jsonable):
+def _set_entry_module_path(workflow: Workflow, entry_module_path: Text):
     """
     Sets the specified entry module path to the job config of the given :class:`~ai_flow.workflow.workflow.Workflow`.
     
@@ -215,7 +210,7 @@ def resume_workflow_scheduling(workflow_name: Text = None) -> WorkflowInfo:
 def start_new_workflow_execution(workflow_name: Text) -> WorkflowExecutionInfo:
     """
     Starts the new workflow execution by the scheduler with the given name of workflow. The start of the workflow
-    execution is assigned to the :class:`~ai_flow.plugin_interface.scheduler_interface.Scheduler` in Scheduler Service,
+    execution is delegated to the :class:`~ai_flow.plugin_interface.scheduler_interface.Scheduler` in Scheduler Service,
     that runs the workflow based on the current project path.
 
     :param workflow_name: The name of the workflow.
@@ -229,7 +224,7 @@ def start_new_workflow_execution(workflow_name: Text) -> WorkflowExecutionInfo:
 def stop_all_workflow_executions(workflow_name: Text) -> List[WorkflowExecutionInfo]:
     """
     Stops the workflow executions by the scheduler with the given name of workflow. The stop of the workflow execution
-    is assigned to the :class:`~ai_flow.plugin_interface.scheduler_interface.Scheduler` in Scheduler Service, that stops
+    is delegated to the :class:`~ai_flow.plugin_interface.scheduler_interface.Scheduler` in Scheduler Service, that stops
     the workflow running.
 
     :param workflow_name: The name of the workflow.
@@ -243,7 +238,7 @@ def stop_all_workflow_executions(workflow_name: Text) -> List[WorkflowExecutionI
 def stop_workflow_execution(execution_id: Text) -> WorkflowExecutionInfo:
     """
     Stops the workflow execution by the scheduler with the given id of workflow execution. The stop of the workflow
-    execution is assigned to the :class:`~ai_flow.plugin_interface.scheduler_interface.Scheduler` in Scheduler Service,
+    execution is delegated to the :class:`~ai_flow.plugin_interface.scheduler_interface.Scheduler` in Scheduler Service,
     that stops the workflow running.
 
     :param execution_id: The id of the workflow execution.
@@ -280,7 +275,7 @@ def start_job_execution(job_name: Text,
                         execution_id: Text) -> JobExecutionInfo:
     """
     Starts the job execution by the scheduler with the given name of job and id of corresponding workflow execution. The
-    start of the job execution is assigned to the :class:`~ai_flow.plugin_interface.scheduler_interface.Scheduler` in
+    start of the job execution is delegated to the :class:`~ai_flow.plugin_interface.scheduler_interface.Scheduler` in
     Scheduler Service, that runs the job based on the corresponding workflow execution.
 
     :param job_name: The name of the job.
@@ -295,7 +290,7 @@ def stop_job_execution(job_name: Text,
                        execution_id: Text) -> JobExecutionInfo:
     """
     Stops the job execution by the scheduler with the given name of job and id of corresponding workflow execution. The
-    stop of the job execution is assigned to the :class:`~ai_flow.plugin_interface.scheduler_interface.Scheduler` in
+    stop of the job execution is delegated to the :class:`~ai_flow.plugin_interface.scheduler_interface.Scheduler` in
     Scheduler Service, that stops the job running.
     
     :param job_name: The name of the job.
@@ -310,7 +305,7 @@ def restart_job_execution(job_name: Text,
                           execution_id: Text) -> JobExecutionInfo:
     """
     Restarts the job execution by the scheduler with the given name of job and id of corresponding workflow execution.
-    The restart of the job execution is assigned to the :class:`~ai_flow.plugin_interface.scheduler_interface.Scheduler`
+    The restart of the job execution is delegated to the :class:`~ai_flow.plugin_interface.scheduler_interface.Scheduler`
     in Scheduler Service, that reruns the job based on the corresponding workflow execution.
     
     :param job_name: The name of the job.
