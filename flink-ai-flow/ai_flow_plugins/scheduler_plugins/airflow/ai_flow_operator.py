@@ -93,7 +93,7 @@ class AIFlowOperator(BaseOperator):
         if context['conf'].has_option('scheduler', 'working_dir'):
             root_working_dir = context['conf'].get('scheduler', 'working_dir')
         else:
-            root_working_dir = os.path.join(project_context.project_path, 'temp')
+            root_working_dir = project_context.project_path
         self.log.info('working dir: {}'.format(root_working_dir))
 
         self.job_runtime_env = prepare_job_runtime_env(workflow_snapshot_id=self.workflow.workflow_snapshot_id,

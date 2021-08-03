@@ -15,10 +15,10 @@
 # specific language governing permissions and limitations
 # under the License.
 import os
-import time
+import shutil
 
-from ai_flow.plugin_interface.scheduler_interface import JobExecutionInfo
 from ai_flow.context.project_context import ProjectContext
+from ai_flow.plugin_interface.scheduler_interface import JobExecutionInfo
 from ai_flow.runtime.job_runtime_env import JobRuntimeEnv
 
 
@@ -38,23 +38,21 @@ def prepare_job_runtime_env(workflow_snapshot_id,
     """
     working_dir = os.path.join(root_working_dir,
                                workflow_name,
-                               job_execution_info.job_name,
-                               str(time.strftime("%Y%m%d%H%M%S", time.localtime())))
+                               job_execution_info.job_name)
     job_runtime_env: JobRuntimeEnv = JobRuntimeEnv(working_dir=working_dir,
                                                    job_execution_info=job_execution_info)
-    if not os.path.exists(working_dir):
-        os.makedirs(job_runtime_env.log_dir)
-        job_runtime_env.save_job_execution_info()
-        os.symlink(project_context.get_workflow_path(workflow_name=workflow_name),
-                   os.path.join(working_dir, workflow_name))
-        if os.path.exists(project_context.get_generated_path()):
-            os.symlink(os.path.join(project_context.get_generated_path(),
-                                    workflow_snapshot_id,
-                                    job_execution_info.job_name),
-                       job_runtime_env.generated_dir)
-        if os.path.exists(project_context.get_resources_path()):
-            os.symlink(project_context.get_resources_path(), job_runtime_env.resource_dir)
-        if os.path.exists(project_context.get_dependencies_path()):
-            os.symlink(project_context.get_dependencies_path(), job_runtime_env.dependencies_dir)
-        os.symlink(project_context.get_project_config_file(), job_runtime_env.project_config_file)
+    if os.path.exists(working_dir):
+        shutil.rmtree(working_dir)
+    os.makedirs(working_dir)
+    shutil.copytree(project_context.get_workflow_path(workflow_name), os.path.join(working_dir, workflow_name))
+    if os.path.exists(project_context.get_generated_path()):
+        shutil.copytree(os.path.join(project_context.get_generated_path(),
+                                     workflow_snapshot_id,
+                                     job_execution_info.job_name), job_runtime_env.generated_dir)
+    if os.path.exists(project_context.get_resources_path()):
+        shutil.copytree(project_context.get_resources_path(), job_runtime_env.resource_dir)
+    if os.path.exists(project_context.get_dependencies_path()):
+        shutil.copytree(project_context.get_dependencies_path(), job_runtime_env.dependencies_dir)
+    shutil.copy(project_context.get_project_config_file(), job_runtime_env.project_config_file)
+    job_runtime_env.save_job_execution_info()
     return job_runtime_env

@@ -15,8 +15,10 @@
 # specific language governing permissions and limitations
 # under the License.
 from ai_flow.plugin_interface import register_job_plugin_factory
+from ai_flow_plugins.job_plugins.python.occlum_python_job_plugin import OcclumPythonJobPluginFactory
 from ai_flow_plugins.job_plugins.python.python_job_plugin import PythonJobPluginFactory
 from ai_flow_plugins.job_plugins.python.python_processor import PythonProcessor
 from ai_flow_plugins.job_plugins.python.python_job_config import PythonJobConfig
 
 register_job_plugin_factory(PythonJobPluginFactory())
+register_job_plugin_factory(OcclumPythonJobPluginFactory())

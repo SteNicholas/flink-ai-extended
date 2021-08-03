@@ -20,5 +20,7 @@ from ai_flow_plugins.job_plugins.flink.flink_processor import FlinkPythonProcess
 from ai_flow_plugins.job_plugins.flink.flink_job_config import FlinkJobConfig
 from ai_flow_plugins.job_plugins.flink.flink_env import set_flink_env, FlinkEnv, \
     FlinkBatchEnv, FlinkStreamEnv
+from ai_flow_plugins.job_plugins.flink.occlum_flink_job_plugin import OcclumFlinkJobPluginFactory
 
 register_job_plugin_factory(FlinkJobPluginFactory())
+register_job_plugin_factory(OcclumFlinkJobPluginFactory())

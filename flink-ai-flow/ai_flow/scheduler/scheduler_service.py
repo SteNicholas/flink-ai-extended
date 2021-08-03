@@ -14,32 +14,35 @@
 # KIND, either express or implied.  See the License for the
 # specific language governing permissions and limitations
 # under the License.
-from typing import Text
+import json
+import os
 import traceback
+from subprocess import Popen
+from typing import Text
 
 from ai_flow.common.configuration import AIFlowConfiguration
-from ai_flow.workflow.workflow import WorkflowPropertyKeys
-from ai_flow.plugin_interface.blob_manager_interface import BlobConfig, BlobManagerFactory
-
-from ai_flow.util import json_utils
 from ai_flow.context.project_context import ProjectContext, build_project_context
+from ai_flow.endpoint.server.workflow_proto_utils import workflow_to_proto, workflow_execution_to_proto, \
+    workflow_execution_list_to_proto, job_to_proto, job_list_to_proto
+from ai_flow.plugin_interface.blob_manager_interface import BlobConfig
+from ai_flow.plugin_interface.blob_manager_interface import BlobManagerFactory
+from ai_flow.plugin_interface.scheduler_interface import Scheduler, JobExecutionInfo, WorkflowExecutionInfo
 from ai_flow.protobuf.message_pb2 import ResultProto, StatusProto
-from ai_flow.protobuf.scheduling_service_pb2_grpc import SchedulingServiceServicer
 from ai_flow.protobuf.scheduling_service_pb2 import \
     (ScheduleWorkflowRequest,
      WorkflowInfoResponse,
-     ListWorkflowInfoResponse,
      WorkflowExecutionRequest,
      WorkflowExecutionResponse,
      ListWorkflowExecutionResponse,
      ScheduleJobRequest,
      JobInfoResponse,
      ListJobInfoResponse)
+from ai_flow.protobuf.scheduling_service_pb2_grpc import SchedulingServiceServicer
+from ai_flow.runtime.job_runtime_util import prepare_job_runtime_env
 from ai_flow.scheduler.scheduler_factory import SchedulerFactory
-from ai_flow.plugin_interface.scheduler_interface import Scheduler
+from ai_flow.util import json_utils
 from ai_flow.workflow.workflow import Workflow
-from ai_flow.endpoint.server.workflow_proto_utils import workflow_to_proto, workflow_list_to_proto, \
-    workflow_execution_to_proto, workflow_execution_list_to_proto, job_to_proto, job_list_to_proto
+from ai_flow.workflow.workflow import WorkflowPropertyKeys
 
 
 class SchedulerServiceConfig(AIFlowConfiguration):
@@ -96,7 +99,7 @@ class SchedulerService(SchedulingServiceServicer):
             blob_config = BlobConfig(raw_config)
             blob_manager = BlobManagerFactory.create_blob_manager(blob_config.blob_manager_class(),
                                                                   blob_config.blob_manager_config())
-            project_path: Text = blob_manager\
+            project_path: Text = blob_manager \
                 .download_project(workflow_snapshot_id=workflow.workflow_snapshot_id,
                                   remote_path=workflow.project_uri,
                                   local_path=self._scheduler_service_config.repository())
@@ -110,6 +113,60 @@ class SchedulerService(SchedulingServiceServicer):
                     result=ResultProto(status=StatusProto.ERROR,
                                        error_message='{}, {} do not exist!'.format(project_name,
                                                                                    workflow.workflow_name)))
+
+            contains_occlum = False
+            occlum_image_path = None
+            occlum_instance = None
+            python_path = []
+            for job_config in workflow.workflow_config.job_configs.values():
+                if 'occlum' in job_config.job_type:
+                    contains_occlum = True
+                    if 'occlum_image_path' in job_config.properties:
+                        occlum_image_path = job_config.properties['occlum_image_path']
+                        occlum_instance = os.path.abspath(os.path.dirname(occlum_image_path))
+                        python_path.insert(0, project_context.get_workflow_path(workflow.workflow_name).replace(
+                            occlum_image_path, ''))
+                        python_path.insert(0, os.path.join(project_path, 'dependencies', 'python').replace(
+                            occlum_image_path, ''))
+
+                        prepare_job_runtime_env(workflow.workflow_snapshot_id, workflow.workflow_name, project_context,
+                                                JobExecutionInfo(job_name=job_config.job_name,
+                                                                 workflow_execution=WorkflowExecutionInfo(
+                                                                     workflow_execution_id='',
+                                                                     workflow_info=workflow_info)),
+                                                project_context.project_path)
+
+            if contains_occlum and occlum_instance is not None:
+                with open(os.path.join(os.path.abspath(os.path.dirname(occlum_image_path)), 'Occlum.json'),
+                          'r') as occlum_json:
+                    occlum_config = json.load(occlum_json)
+                    occlum_config['env']['default'].append("PYTHONPATH={}".format(':'.join(python_path)))
+                    print(occlum_config['env']['default'])
+                os.remove(os.path.join(os.path.abspath(os.path.dirname(occlum_image_path)), 'Occlum.json'))
+                with open(os.path.join(os.path.abspath(os.path.dirname(occlum_image_path)), 'Occlum.json'),
+                          'w') as occlum_json:
+                    json.dump(occlum_config, occlum_json)
+
+                print('cd {} && SGX_MODE={} occlum build'.format(occlum_instance, str(
+                    os.environ['SGX_MODE']) if 'SGX_MODE' in os.environ else 'HW'))
+                occlum_build = Popen('cd {} && SGX_MODE={} occlum build'.format(occlum_instance, str(
+                    os.environ['SGX_MODE']) if 'SGX_MODE' in os.environ else 'HW'), shell=True)
+                occlum_build.wait()
+                print('cd {} && occlum stop'.format(occlum_instance))
+                occlum_stop = Popen('cd {} && occlum stop'.format(occlum_instance), shell=True)
+                occlum_stop.wait()
+                print('cd {} && occlum start'.format(occlum_instance))
+                occlum_start = Popen('cd {} && occlum start'.format(occlum_instance), shell=True)
+                occlum_start.wait()
+                print('cd {} && occlum exec /bin/run_flink_fish.sh jm'.format(occlum_instance))
+                start_job_manager = Popen('cd {} && occlum exec /bin/run_flink_fish.sh jm'.format(occlum_instance),
+                                          shell=True)
+                start_job_manager.wait()
+                print('cd {} && occlum exec /bin/run_flink_fish.sh tm'.format(occlum_instance))
+                start_task_manager = Popen('cd {} && occlum exec /bin/run_flink_fish.sh tm'.format(occlum_instance),
+                                           shell=True)
+                start_task_manager.wait()
+
             return WorkflowInfoResponse(result=ResultProto(status=StatusProto.OK),
                                         workflow=workflow_to_proto(workflow_info))
         except Exception as err:
