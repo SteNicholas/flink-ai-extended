@@ -22,14 +22,13 @@ import sys
 from logging.config import dictConfig
 from typing import List, Dict
 
-from flask import Flask
+from flask import Flask, request
+from flask_cors import CORS
 
 from ai_flow.ai_graph.ai_graph import AIGraph
 from ai_flow.ai_graph.ai_node import AINode, ReadDatasetNode, WriteDatasetNode
 from ai_flow.ai_graph.data_edge import DataEdge
-from ai_flow.endpoint.server.server_config import DBType
-from ai_flow.store.db.db_util import extract_db_engine_from_uri, parse_mongo_uri
-from ai_flow.store.mongo_store import MongoStore
+from ai_flow.plugin_interface.scheduler_interface import Scheduler, SchedulerFactory
 from ai_flow.store.sqlalchemy_store import SqlAlchemyStore
 from ai_flow.util.json_utils import loads, Jsonable, dumps
 from ai_flow.workflow.control_edge import ControlEdge
@@ -51,26 +50,21 @@ dictConfig({
 })
 
 app = Flask(__name__)
-
-
-def after_request(resp):
-    resp.headers['Access-Control-Allow-Origin'] = '*'
-    return resp
-
-
-app.after_request(after_request)
+CORS(app=app)
 
 store: SqlAlchemyStore = None
+scheduler: Scheduler = None
+airflow: str = None
 
 
-def init_store(store_uri: str):
+def init(store_uri: str, scheduler_class: str, airflow_web_server_uri: str):
     global store
-    db_engine = extract_db_engine_from_uri(store_uri)
-    if DBType.value_of(db_engine) == DBType.MONGODB:
-        username, password, host, port, db = parse_mongo_uri(store_uri)
-        store = MongoStore(host=host, port=int(port), username=username, password=password, db=db)
-    else:
-        store = SqlAlchemyStore(store_uri)
+    store = SqlAlchemyStore(store_uri)
+    global scheduler
+    scheduler = SchedulerFactory.create_scheduler(scheduler_class,
+                                                  {'notification_service_uri': None, 'airflow_deploy_path': None})
+    global airflow
+    airflow = airflow_web_server_uri
 
 
 class Edge(Jsonable):
@@ -177,13 +171,45 @@ def node_layer(node: Node, parent_edges: Dict, nodes: Dict):
         return max_layer
 
 
-@app.route('/<project>/<workflow>')
-def data_view(project: str, workflow: str):
+@app.route('/api/project')
+def project_metadata():
+    project_list = store.list_project(project_id=request.args.get('uuid'),
+                                      project_name=request.args.get('name'),
+                                      page_size=int(request.args.get('pageSize')),
+                                      offset=(int(request.args.get('pageNo')) - 1) * int(request.args.get('pageSize')))
+    project_resp = dumps({'data': project_list if project_list else []})
     app.logger.info(
-        'Get the data view of the graph for the workflow({}) of the project({}).'.format(workflow, project))
-    workflow_meta = store.get_workflow_by_name(project_name=project, workflow_name=workflow)
+        'Get the metadata of the project(id={}, name={}): {}.'.format(request.args.get('uuid'),
+                                                                      request.args.get('name'), project_resp))
+    return project_resp
+
+
+@app.route('/api/workflow')
+def workflow_metadata():
+    workflow_list = store.list_workflows(workflow_id=request.args.get('uuid'),
+                                         workflow_name=request.args.get('name'),
+                                         page_size=int(request.args.get('pageSize')),
+                                         offset=(int(request.args.get('pageNo')) - 1) * int(
+                                             request.args.get('pageSize')))
+    workflow_resp = dumps({'data': workflow_list if workflow_list else []})
+    app.logger.info(
+        'Get the metadata of the workflow(id={}, name={}): {}.'.format(request.args.get('uuid'),
+                                                                       request.args.get('name'), workflow_resp))
+    return workflow_resp
+
+
+@app.route('/api/workflow/data-view')
+def data_view():
+    project_id = request.args.get('project_id')
+    workflow_name = request.args.get('workflow_name')
+    app.logger.info(
+        'Get the data view of the graph for the workflow({}) of the project({}).'.format(workflow_name, project_id))
+    project_meta = store.get_project_by_id(project_id)
+    if project_meta is None:
+        raise Exception('The project({}) for the workflow({}) is not found.'.format(project_id, workflow_name))
+    workflow_meta = store.get_workflow_by_name(project_name=project_meta.name, workflow_name=workflow_name)
     if workflow_meta is None:
-        raise Exception('The workflow({}) of the project({}) is not found.'.format(workflow, project))
+        raise Exception('The workflow({}) of the project({}) is not found.'.format(workflow_name, project_id))
     else:
         graph_meta: Dict[str, str] = json.loads(workflow_meta.graph)
         if '_context_extractor' in graph_meta:
@@ -260,27 +286,128 @@ def data_view(project: str, workflow: str):
                 graph_node.children = children_edges[graph_node.id]
             graph_nodes.append(graph_node.to_dict())
         app.logger.info('Get the nodes of the graph for the workflow({}) of the project({}): {}.'
-                        .format(project, project, json.dumps(graph_nodes)))
+                        .format(workflow_name, project_id, json.dumps(graph_nodes)))
         return json.dumps(graph_nodes)
+
+
+@app.route('/api/workflow/task-view')
+def task_view():
+    project_id = request.args.get('project_id')
+    workflow_name = request.args.get('workflow_name')
+    app.logger.info(
+        'Get the task view of the graph for the workflow({}) of the project({}).'.format(workflow_name, project_id))
+    project_meta = store.get_project_by_id(project_id)
+    if project_meta is None:
+        raise Exception('The project({}) for the workflow({}) is not found.'.format(project_id, workflow_name))
+    workflow_meta = store.get_workflow_by_name(project_name=project_meta.name, workflow_name=workflow_name)
+    if workflow_meta is None:
+        raise Exception('The workflow({}) of the project({}) is not found.'.format(workflow_name, project_id))
+    else:
+        return '{}/graph?dag_id={}'.format(airflow, '{}.{}'.format(project_meta.name, workflow_name))
+
+
+@app.route('/api/workflow-execution')
+def workflow_execution_metadata():
+    project_name = request.args.get('project_name')
+    workflow_name = request.args.get('workflow_name')
+    workflow_execution_list = scheduler.list_workflow_executions(project_name,
+                                                                 workflow_name) if project_name and workflow_name else None
+    workflow_execution_resp = dumps({'data': workflow_execution_list if workflow_execution_list else []})
+    app.logger.info(
+        'Get the metadata of the workflow execution(project={}, workflow={}): {}.'.format(project_name, workflow_name,
+                                                                                          workflow_execution_resp))
+    return workflow_execution_resp
+
+
+@app.route('/api/job-execution')
+def job_execution_metadata():
+    workflow_execution_id = request.args.get('workflow_execution_id')
+    job_execution_list = scheduler.list_job_executions(workflow_execution_id) if workflow_execution_id else None
+    job_execution_resp = dumps({'data': job_execution_list if job_execution_list else []})
+    app.logger.info(
+        'Get the metadata of the job execution(workflow_execution={}): {}.'.format(
+            request.args.get('workflow_execution_id'), job_execution_resp))
+    return job_execution_resp
+
+
+@app.route('/api/dataset')
+def dataset_metadata():
+    dataset_list = store.list_datasets(dataset_id=request.args.get('uuid'),
+                                       dataset_name=request.args.get('name'),
+                                       page_size=int(request.args.get('pageSize')),
+                                       offset=(int(request.args.get('pageNo')) - 1) * int(request.args.get('pageSize')))
+    dataset_resp = dumps({'data': dataset_list if dataset_list else []})
+    app.logger.info(
+        'Get the metadata of the dataset(id={}, name={}): {}.'.format(request.args.get('uuid'),
+                                                                      request.args.get('name'), dataset_resp))
+    return dataset_resp
+
+
+@app.route('/api/model')
+def model_metadata():
+    model_list = store.list_registered_models(model_name=request.args.get('model_name'),
+                                              page_size=int(request.args.get('pageSize')),
+                                              offset=(int(request.args.get('pageNo')) - 1) * int(
+                                                  request.args.get('pageSize')))
+    model_resp = json.dumps({'data': [model.__dict__ for model in model_list] if model_list else []})
+    app.logger.info(
+        'Get the metadata of the model(name={}): {}.'.format(request.args.get('name'), model_resp))
+    return model_resp
+
+
+@app.route('/api/model-version')
+def model_version_metadata():
+    model_list = store.list_model_versions(model_name=request.args.get('model_name'),
+                                           model_version=request.args.get('model_version'),
+                                           page_size=int(request.args.get('pageSize')),
+                                           offset=(int(request.args.get('pageNo')) - 1) * int(
+                                               request.args.get('pageSize')))
+    model_resp = json.dumps({'data': [model.__dict__ for model in model_list] if model_list else []})
+    app.logger.info(
+        'Get the metadata of the model(name={}): {}.'.format(request.args.get('name'), model_resp))
+    return model_resp
+
+
+@app.route('/api/artifact')
+def artifact_metadata():
+    artifact_list = store.list_artifact(artifact_id=request.args.get('uuid'),
+                                        artifact_name=request.args.get('name'),
+                                        page_size=int(request.args.get('pageSize')),
+                                        offset=(int(request.args.get('pageNo')) - 1) * int(
+                                            request.args.get('pageSize')))
+    artifact_resp = dumps({'data': artifact_list if artifact_list else []})
+    app.logger.info(
+        'Get the metadata of the artifact(id={}, name={}): {}.'.format(request.args.get('uuid'),
+                                                                       request.args.get('name'), artifact_resp))
+    return artifact_resp
 
 
 def main(argv):
     port = ''
     store_uri = ''
+    scheduler_class = ''
+    airflow_web_server_uri = ''
     try:
-        opts, args = getopt.getopt(argv, "hp:s:", ["port=", "store_uri="])
+        opts, args = getopt.getopt(argv, "hp:s:c:a:",
+                                   ["port=", "store_uri=", "scheduler_class=", "airflow_web_server_uri="])
     except getopt.GetoptError:
-        print('usage: web_server.py -p <port> -s <store_uri>')
+        print('usage: web_server.py -p <port> -s <store_uri> -c <scheduler_class> -a <airflow_web_server_uri>')
         sys.exit(2)
     for opt, arg in opts:
         if opt == '-h':
-            print('usage: web_server.py -p <port> -s <store_uri>')
+            print('usage: web_server.py -p <port> -s <store_uri> -c <scheduler_class> -a <airflow_web_server_uri>')
             sys.exit()
         elif opt in ("-p", "--port"):
             port = arg
         elif opt in ("-s", "--store_uri"):
             store_uri = arg
-    init_store(store_uri)
+        elif opt in ("-c", "--scheduler_class"):
+            scheduler_class = arg
+        elif opt in ("-a", "--airflow_web_server_uri"):
+            airflow_web_server_uri = arg
+    if not scheduler_class:
+        scheduler_class = 'ai_flow_plugins.scheduler_plugins.airflow.airflow_scheduler.AirFlowScheduler'
+    init(store_uri, scheduler_class, airflow_web_server_uri)
     app.run(host='127.0.0.1', port=port)
 
 

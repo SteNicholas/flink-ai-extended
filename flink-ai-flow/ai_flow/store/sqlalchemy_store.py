@@ -19,15 +19,14 @@
 import logging
 import time
 from typing import Optional, Text, List, Union
+
 import sqlalchemy.exc
 import sqlalchemy.orm
-
-from ai_flow.scheduler_service.service.workflow_execution_event_handler_state import WorkflowContextEventHandlerState
-from ai_flow.util import json_utils
-from ai_flow.workflow.control_edge import WorkflowSchedulingRule
 from sqlalchemy import and_, cast, Integer
 
 from ai_flow.common.status import Status
+from ai_flow.endpoint.server.exception import AIFlowException
+from ai_flow.endpoint.server.high_availability import Member
 from ai_flow.meta.artifact_meta import ArtifactMeta
 from ai_flow.meta.dataset_meta import DatasetMeta, Properties, DataType, Schema
 from ai_flow.meta.metric_meta import MetricMeta, MetricType, MetricSummary
@@ -41,8 +40,7 @@ from ai_flow.metric.utils import table_to_metric_meta, table_to_metric_summary, 
 from ai_flow.model_center.entity.model_version_stage import STAGE_DELETED, get_canonical_stage, STAGE_GENERATED, \
     STAGE_DEPLOYED, STAGE_VALIDATED
 from ai_flow.protobuf.message_pb2 import INVALID_PARAMETER_VALUE, RESOURCE_ALREADY_EXISTS
-from ai_flow.endpoint.server.exception import AIFlowException
-from ai_flow.endpoint.server.high_availability import Member
+from ai_flow.scheduler_service.service.workflow_execution_event_handler_state import WorkflowContextEventHandlerState
 from ai_flow.store.abstract_store import AbstractStore, BROADCAST_ALL_CONTEXT_EXTRACTOR
 from ai_flow.store.db.base_model import base
 from ai_flow.store.db.db_model import SqlDataset, SqlModelRelation, SqlModelVersionRelation, SqlProject, \
@@ -50,6 +48,8 @@ from ai_flow.store.db.db_model import SqlDataset, SqlModelRelation, SqlModelVers
 from ai_flow.store.db.db_model import SqlMetricMeta, SqlMetricSummary
 from ai_flow.store.db.db_model import SqlRegisteredModel, SqlModelVersion
 from ai_flow.store.db.db_util import extract_db_engine_from_uri, create_sqlalchemy_engine, _get_managed_session_maker
+from ai_flow.util import json_utils
+from ai_flow.workflow.control_edge import WorkflowSchedulingRule
 
 if not hasattr(time, 'time_ns'):
     time.time_ns = lambda: int(time.time() * 1e9)
@@ -327,19 +327,24 @@ class SqlAlchemyStore(AbstractStore):
             except sqlalchemy.exc.IntegrityError as e:
                 raise AIFlowException(e)
 
-    def list_datasets(self, page_size, offset) -> Optional[List[DatasetMeta]]:
+    def list_datasets(self, page_size, offset, dataset_id=None, dataset_name=None) -> Optional[List[DatasetMeta]]:
         """
         List registered datasets in metadata store.
 
         :param page_size: the limitation of the listed datasets.
         :param offset: the offset of listed datasets.
+        :param dataset_id: the id of the dataset.
+        :param dataset_name: the name of the dataset.
         :return: List of :py:class:`ai_flow.meta.dataset_meta.DatasetMeta` objects,
                  return None if no datasets to be listed.
         """
         with self.ManagedSessionMaker() as session:
-            dataset_result = session.query(SqlDataset).filter(SqlDataset.is_deleted != TRUE).limit(
-                page_size).offset(
-                offset).all()
+            conditions = [SqlDataset.is_deleted == 'False']
+            if dataset_id:
+                conditions.append(SqlDataset.uuid == dataset_id)
+            if dataset_name:
+                conditions.append(SqlDataset.name == dataset_name)
+            dataset_result = session.query(SqlDataset).filter(*conditions).limit(page_size).offset(offset).all()
             if len(dataset_result) == 0:
                 return None
             dataset_list = []
@@ -444,19 +449,24 @@ class SqlAlchemyStore(AbstractStore):
                 raise AIFlowException('Registered Project (name={}) already exists. '
                                       'Error: {}'.format(project.name, str(e)))
 
-    def list_project(self, page_size, offset) -> Optional[List[ProjectMeta]]:
+    def list_project(self, page_size, offset, project_id=None, project_name=None) -> Optional[List[ProjectMeta]]:
         """
         List registered projects in metadata store.
 
         :param page_size: the limitation of the listed projects.
         :param offset: the offset of listed projects.
+        :param project_id: the id of the project
+        :param project_name: the name of the project
         :return: List of :py:class:`ai_flow.meta.project_meta.ProjectMeta` objects,
                  return None if no projects to be listed.
         """
         with self.ManagedSessionMaker() as session:
-            project_result = session.query(SqlProject).filter(SqlProject.is_deleted != TRUE).limit(
-                page_size).offset(
-                offset).all()
+            conditions = [SqlProject.is_deleted == 'False']
+            if project_id:
+                conditions.append(SqlProject.uuid == project_id)
+            if project_name:
+                conditions.append(SqlProject.name == project_name)
+            project_result = session.query(SqlProject).filter(*conditions).limit(page_size).offset(offset).all()
             if len(project_result) == 0:
                 return None
             projects = []
@@ -464,7 +474,8 @@ class SqlAlchemyStore(AbstractStore):
                 projects.append(ResultToMeta.result_to_project_meta(project))
             return projects
 
-    def update_project(self, project_name: Text, uri: Text = None, properties: Properties = None) -> Optional[ProjectMeta]:
+    def update_project(self, project_name: Text, uri: Text = None, properties: Properties = None) -> Optional[
+        ProjectMeta]:
         with self.ManagedSessionMaker() as session:
             try:
                 project: SqlProject = session.query(SqlProject).filter(
@@ -815,22 +826,31 @@ class SqlAlchemyStore(AbstractStore):
                                                          SqlWorkflow.is_deleted.is_(False)).scalar()
             return None if workflow is None else ResultToMeta.result_to_workflow_meta(workflow)
 
-    def list_workflows(self, project_name, page_size=None, offset=None) -> Optional[List[WorkflowMeta]]:
+    def list_workflows(self, project_name=None, page_size=None, offset=None,
+                       workflow_id=None, workflow_name=None) -> Optional[List[WorkflowMeta]]:
         """
         List all workflows of the specific project
 
         :param project_name: the name of project which contains the workflow
         :param page_size     limitation of listed workflows.
         :param offset        offset of listed workflows.
+        :param workflow_id: the id of the workflows
+        :param workflow_name: the name of the workflows
         """
-
         with self.ManagedSessionMaker() as session:
-            project = self.get_project_by_name(project_name)
-            if not project:
-                raise AIFlowException("The project name you specific doesn't exists, project: \"{}\""
-                                      .format(project_name))
-            workflow_result = session.query(SqlWorkflow).filter(SqlWorkflow.project_id == project.uuid,
-                                                                SqlWorkflow.is_deleted.is_(False))
+            conditions = [SqlWorkflow.is_deleted.is_(False)]
+            if project_name:
+                project = self.get_project_by_name(project_name)
+                if project:
+                    conditions.append(SqlWorkflow.project_id == project.uuid)
+                else:
+                    raise AIFlowException("The project name you specific doesn't exists, project: \"{}\""
+                                          .format(project_name))
+            if workflow_id:
+                conditions.append(SqlWorkflow.uuid == workflow_id)
+            if workflow_name:
+                conditions.append(SqlWorkflow.name == workflow_name)
+            workflow_result = session.query(SqlWorkflow).filter(*conditions)
             if page_size:
                 workflow_result.limit(page_size)
             if offset:
@@ -1096,18 +1116,24 @@ class SqlAlchemyStore(AbstractStore):
             except sqlalchemy.exc.IntegrityError as e:
                 raise AIFlowException(str(e))
 
-    def list_artifact(self, page_size, offset) -> Optional[List[ArtifactMeta]]:
+    def list_artifact(self, page_size, offset, artifact_id=None, artifact_name=None) -> Optional[List[ArtifactMeta]]:
         """
         List registered artifacts in metadata store.
 
         :param page_size: the limitation of the listed artifacts.
         :param offset: the offset of listed artifacts.
+        :param artifact_id: the id of the artifact.
+        :param artifact_name: the name of the artifact.
         :return: List of :py:class:`ai_flow.meta.artifact_meta.py.ArtifactMeta` objects,
                  return None if no artifacts to be listed.
         """
         with self.ManagedSessionMaker() as session:
-            artifact_result = session.query(SqlArtifact).filter(SqlArtifact.is_deleted != TRUE).limit(page_size).offset(
-                offset).all()
+            conditions = [SqlArtifact.is_deleted == 'False']
+            if artifact_id:
+                conditions.append(SqlArtifact.uuid == artifact_id)
+            if artifact_name:
+                conditions.append(SqlArtifact.name == artifact_name)
+            artifact_result = session.query(SqlArtifact).filter(*conditions).limit(page_size).offset(offset).all()
             if len(artifact_result) == 0:
                 return None
             artifact_list = []
@@ -1269,15 +1295,26 @@ class SqlAlchemyStore(AbstractStore):
             if sql_registered_model is not None:
                 session.delete(sql_registered_model)
 
-    def list_registered_models(self):
+    def list_registered_models(self, model_name=None, page_size=None, offset=None):
         """
         List of registered models backend in Model Center.
 
+        :param model_name: The name of the registered model.
+        :param page_size     limitation of listed registered models.
+        :param offset        Offset of listed registered models.
         :return: List of :py:class:`ai_flow.model_center.entity.RegisteredModel` objects.
         """
         with self.ManagedSessionMaker() as session:
-            return [sql_registered_model.to_detail_entity()
-                    for sql_registered_model in session.query(SqlRegisteredModel).all()]
+            conditions = []
+            if model_name:
+                conditions.append(SqlRegisteredModel.model_name == model_name)
+            model_result = session.query(SqlRegisteredModel).filter(*conditions)
+            if page_size:
+                model_result.limit(page_size)
+            if offset:
+                model_result.offset(offset)
+            model_result = model_result.all()
+            return [sql_registered_model.to_detail_entity() for sql_registered_model in model_result]
 
     def get_registered_model_detail(self, registered_model):
         """
@@ -1451,6 +1488,32 @@ class SqlAlchemyStore(AbstractStore):
                 sql_model_version.version_desc = None
                 sql_model_version.current_stage = STAGE_DELETED
                 self._save_to_db(session, sql_model_version)
+
+    def list_model_versions(self, model_name=None, model_version=None, page_size=None, offset=None):
+        """
+        List of model versions backend in Model Center.
+
+        :param model_name: The name of the registered model corresponding to the model version..
+        :param model_version: The version of the model version.
+        :param page_size     limitation of listed model versions.
+        :param offset        Offset of listed model versions.
+        :return: List of :py:class:`ai_flow.model_center.entity.ModelVersionDetail` objects.
+        """
+        with self.ManagedSessionMaker() as session:
+            conditions = [SqlModelVersion.current_stage != STAGE_DELETED]
+            if model_name:
+                conditions.append(SqlModelVersion.model_name == model_name)
+            if model_version:
+                conditions.append(SqlModelVersion.model_version == model_version)
+            model_version_result = session.query(SqlModelVersion).filter(*conditions)
+            if page_size:
+                model_version_result.limit(page_size)
+            if offset:
+                model_version_result.offset(offset)
+            model_version_result = model_version_result.all()
+            if len(model_version_result) == 0:
+                return None
+            return [sql_model_version.to_meta_entity() for sql_model_version in model_version_result]
 
     def get_model_version_detail(self, model_version):
         """
