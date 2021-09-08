@@ -42,7 +42,7 @@ limitations under the License. -->
         <span slot="_properties" slot-scope="text">
           <ellipsis :length="32" tooltip>{{ text }}</ellipsis>
         </span>
-         <span slot="_execution_label" slot-scope="text">
+        <span slot="_execution_label" slot-scope="text">
           <ellipsis :length="32" tooltip>{{ text }}</ellipsis>
         </span>
       </s-table>

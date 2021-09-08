@@ -25,6 +25,7 @@ from typing import List, Dict
 from flask import Flask, request
 from flask_cors import CORS
 
+from ai_flow import WorkflowMeta
 from ai_flow.ai_graph.ai_graph import AIGraph
 from ai_flow.ai_graph.ai_node import AINode, ReadDatasetNode, WriteDatasetNode
 from ai_flow.ai_graph.data_edge import DataEdge
@@ -171,17 +172,109 @@ def node_layer(node: Node, parent_edges: Dict, nodes: Dict):
         return max_layer
 
 
+def generate_graph(workflow_meta: WorkflowMeta):
+    workflow_graph: AIGraph = extract_graph(workflow_meta)
+    workflow_nodes, id_nodes, name_nodes = build_nodes(workflow_graph)
+    parent_edges, children_edges = build_edges(workflow_graph, workflow_nodes, id_nodes, name_nodes)
+    return build_graph(name_nodes, parent_edges, children_edges)
+
+
+def extract_graph(workflow_meta: WorkflowMeta):
+    graph_meta: Dict[str, str] = json.loads(workflow_meta.graph)
+    if '_context_extractor' in graph_meta:
+        graph_meta.pop('_context_extractor', None)
+    return loads(dumps(graph_meta))
+
+
+def build_nodes(workflow_graph: AIGraph):
+    workflow_nodes: Dict[str, AINode] = {}
+    id_nodes: Dict[str, Node] = {}
+    name_nodes: Dict[str, Node] = {}
+    for graph_node in workflow_graph.nodes.values():
+        workflow_nodes.update({graph_node.node_id: graph_node})
+        if isinstance(graph_node, ReadDatasetNode) or isinstance(graph_node, WriteDatasetNode):
+            data_node = Node(id=graph_node.dataset().name, source_flag=True,
+                             data_name=graph_node.dataset().name)
+            id_nodes.update({graph_node.node_id: data_node})
+            name_nodes.update({graph_node.dataset().name: data_node})
+        else:
+            job_node = Node(id=graph_node.config.job_name, node_type=0, name=graph_node.config.job_name,
+                            job_type_name=graph_node.config.job_type, source_flag=False)
+            id_nodes.update({graph_node.node_id: job_node})
+            name_nodes.update({graph_node.config.job_name: job_node})
+    return workflow_nodes, id_nodes, name_nodes
+
+
+def build_edges(workflow_graph: AIGraph, workflow_nodes: Dict[str, AINode], id_nodes: Dict[str, Node],
+                name_nodes: Dict[str, Node]):
+    parent_edges: Dict[str, List[Edge]] = {}
+    children_edges: Dict[str, List[Edge]] = {}
+    for graph_edges in workflow_graph.edges.values():
+        for graph_edge in graph_edges:
+            if isinstance(graph_edge, DataEdge):
+                source_workflow_node: AINode = workflow_nodes.get(graph_edge.source)
+                destination_workflow_node: AINode = workflow_nodes.get(graph_edge.destination)
+                dag_data_type = 'source' if isinstance(source_workflow_node, ReadDatasetNode) else 'sink'
+                source_node: Node = id_nodes.get(graph_edge.source)
+                source_name = source_node.data_name \
+                    if isinstance(source_workflow_node, ReadDatasetNode) \
+                    else source_node.name
+                source_edge: Edge = Edge(id=source_name, name=source_name, dag_data_type=dag_data_type, )
+                destination_node: Node = id_nodes.get(graph_edge.destination)
+                destination_name = destination_node.data_name \
+                    if isinstance(destination_workflow_node, WriteDatasetNode) \
+                    else destination_node.name
+                destination_edge: Edge = Edge(id=destination_name, name=destination_name,
+                                              dag_data_type=dag_data_type)
+                if source_name in children_edges:
+                    children_edges[source_name].append(destination_edge)
+                else:
+                    children_edges[source_name] = [destination_edge]
+                if destination_name in parent_edges:
+                    parent_edges[destination_name].append(source_edge)
+                else:
+                    parent_edges[destination_name] = [source_edge]
+            else:
+                control_edge: ControlEdge = graph_edge
+                for event in control_edge.scheduling_rule.event_condition.events:
+                    if event.sender != '*':
+                        sender_event_edge: Edge = Edge(id=name_nodes[event.sender].id,
+                                                       name=name_nodes[event.sender].name,
+                                                       dag_data_type='event')
+                        receiver_event_edge: Edge = Edge(id=name_nodes[control_edge.destination].id,
+                                                         name=name_nodes[control_edge.destination].name,
+                                                         dag_data_type='event')
+                        if name_nodes[event.sender].id in children_edges:
+                            children_edges[name_nodes[event.sender].id].append(receiver_event_edge)
+                        else:
+                            children_edges[name_nodes[event.sender].id] = [receiver_event_edge]
+                        if name_nodes[control_edge.destination].id in parent_edges:
+                            parent_edges[name_nodes[control_edge.destination].id].append(sender_event_edge)
+                        else:
+                            parent_edges[name_nodes[control_edge.destination].id] = [sender_event_edge]
+    return parent_edges, children_edges
+
+
+def build_graph(name_nodes: Dict[str, Node], parent_edges: Dict[str, List[Edge]],
+                children_edges: Dict[str, List[Edge]]):
+    graph_nodes = []
+    for graph_node in name_nodes.values():
+        graph_node.layer = node_layer(graph_node, parent_edges, name_nodes)
+        if graph_node.id in parent_edges:
+            graph_node.parent = parent_edges[graph_node.id]
+        if graph_node.id in children_edges:
+            graph_node.children = children_edges[graph_node.id]
+        graph_nodes.append(graph_node.to_dict())
+    return json.dumps(graph_nodes)
+
+
 @app.route('/api/project')
 def project_metadata():
     project_list = store.list_project(project_id=request.args.get('uuid'),
                                       project_name=request.args.get('name'),
                                       page_size=int(request.args.get('pageSize')),
                                       offset=(int(request.args.get('pageNo')) - 1) * int(request.args.get('pageSize')))
-    project_resp = dumps({'data': project_list if project_list else []})
-    app.logger.info(
-        'Get the metadata of the project(id={}, name={}): {}.'.format(request.args.get('uuid'),
-                                                                      request.args.get('name'), project_resp))
-    return project_resp
+    return dumps({'data': project_list if project_list else []})
 
 
 @app.route('/api/workflow')
@@ -191,19 +284,13 @@ def workflow_metadata():
                                          page_size=int(request.args.get('pageSize')),
                                          offset=(int(request.args.get('pageNo')) - 1) * int(
                                              request.args.get('pageSize')))
-    workflow_resp = dumps({'data': workflow_list if workflow_list else []})
-    app.logger.info(
-        'Get the metadata of the workflow(id={}, name={}): {}.'.format(request.args.get('uuid'),
-                                                                       request.args.get('name'), workflow_resp))
-    return workflow_resp
+    return dumps({'data': workflow_list if workflow_list else []})
 
 
 @app.route('/api/workflow/data-view')
 def data_view():
     project_id = request.args.get('project_id')
     workflow_name = request.args.get('workflow_name')
-    app.logger.info(
-        'Get the data view of the graph for the workflow({}) of the project({}).'.format(workflow_name, project_id))
     project_meta = store.get_project_by_id(project_id)
     if project_meta is None:
         raise Exception('The project({}) for the workflow({}) is not found.'.format(project_id, workflow_name))
@@ -211,91 +298,13 @@ def data_view():
     if workflow_meta is None:
         raise Exception('The workflow({}) of the project({}) is not found.'.format(workflow_name, project_id))
     else:
-        graph_meta: Dict[str, str] = json.loads(workflow_meta.graph)
-        if '_context_extractor' in graph_meta:
-            graph_meta.pop('_context_extractor', None)
-        workflow_graph: AIGraph = loads(dumps(graph_meta))
-        workflow_nodes: Dict[str, AINode] = {}
-        id_nodes: Dict[str, Node] = {}
-        name_nodes: Dict[str, Node] = {}
-        for graph_node in workflow_graph.nodes.values():
-            workflow_nodes.update({graph_node.node_id: graph_node})
-            if isinstance(graph_node, ReadDatasetNode) or isinstance(graph_node, WriteDatasetNode):
-                data_node = Node(id=graph_node.dataset().name, source_flag=True,
-                                 data_name=graph_node.dataset().name)
-                id_nodes.update({graph_node.node_id: data_node})
-                name_nodes.update({graph_node.dataset().name: data_node})
-            else:
-                job_node = Node(id=graph_node.config.job_name, node_type=0, name=graph_node.config.job_name,
-                                job_type_name=graph_node.config.job_type, source_flag=False)
-                id_nodes.update({graph_node.node_id: job_node})
-                name_nodes.update({graph_node.config.job_name: job_node})
-
-        parent_edges: Dict[str, List[Edge]] = {}
-        children_edges: Dict[str, List[Edge]] = {}
-        for graph_edges in workflow_graph.edges.values():
-            for graph_edge in graph_edges:
-                if isinstance(graph_edge, DataEdge):
-                    source_workflow_node: AINode = workflow_nodes.get(graph_edge.source)
-                    destination_workflow_node: AINode = workflow_nodes.get(graph_edge.destination)
-                    dag_data_type = 'source' if isinstance(source_workflow_node, ReadDatasetNode) else 'sink'
-                    source_node: Node = id_nodes.get(graph_edge.source)
-                    source_name = source_node.data_name \
-                        if isinstance(source_workflow_node, ReadDatasetNode) \
-                        else source_node.name
-                    source_edge: Edge = Edge(id=source_name, name=source_name, dag_data_type=dag_data_type, )
-                    destination_node: Node = id_nodes.get(graph_edge.destination)
-                    destination_name = destination_node.data_name \
-                        if isinstance(destination_workflow_node, WriteDatasetNode) \
-                        else destination_node.name
-                    destination_edge: Edge = Edge(id=destination_name, name=destination_name,
-                                                  dag_data_type=dag_data_type)
-                    if source_name in children_edges:
-                        children_edges[source_name].append(destination_edge)
-                    else:
-                        children_edges[source_name] = [destination_edge]
-                    if destination_name in parent_edges:
-                        parent_edges[destination_name].append(source_edge)
-                    else:
-                        parent_edges[destination_name] = [source_edge]
-                else:
-                    control_edge: ControlEdge = graph_edge
-                    for event in control_edge.scheduling_rule.event_condition.events:
-                        if event.sender != '*':
-                            sender_event_edge: Edge = Edge(id=name_nodes[event.sender].id,
-                                                           name=name_nodes[event.sender].name,
-                                                           dag_data_type='event')
-                            receiver_event_edge: Edge = Edge(id=name_nodes[control_edge.destination].id,
-                                                             name=name_nodes[control_edge.destination].name,
-                                                             dag_data_type='event')
-                            if name_nodes[event.sender].id in children_edges:
-                                children_edges[name_nodes[event.sender].id].append(receiver_event_edge)
-                            else:
-                                children_edges[name_nodes[event.sender].id] = [receiver_event_edge]
-                            if name_nodes[control_edge.destination].id in parent_edges:
-                                parent_edges[name_nodes[control_edge.destination].id].append(sender_event_edge)
-                            else:
-                                parent_edges[name_nodes[control_edge.destination].id] = [sender_event_edge]
-
-        graph_nodes = []
-        for graph_node in name_nodes.values():
-            graph_node.layer = node_layer(graph_node, parent_edges, name_nodes)
-            if graph_node.id in parent_edges:
-                graph_node.parent = parent_edges[graph_node.id]
-            if graph_node.id in children_edges:
-                graph_node.children = children_edges[graph_node.id]
-            graph_nodes.append(graph_node.to_dict())
-        app.logger.info('Get the nodes of the graph for the workflow({}) of the project({}): {}.'
-                        .format(workflow_name, project_id, json.dumps(graph_nodes)))
-        return json.dumps(graph_nodes)
+        return generate_graph(workflow_meta)
 
 
 @app.route('/api/workflow/task-view')
 def task_view():
     project_id = request.args.get('project_id')
     workflow_name = request.args.get('workflow_name')
-    app.logger.info(
-        'Get the task view of the graph for the workflow({}) of the project({}).'.format(workflow_name, project_id))
     project_meta = store.get_project_by_id(project_id)
     if project_meta is None:
         raise Exception('The project({}) for the workflow({}) is not found.'.format(project_id, workflow_name))
@@ -312,22 +321,14 @@ def workflow_execution_metadata():
     workflow_name = request.args.get('workflow_name')
     workflow_execution_list = scheduler.list_workflow_executions(project_name,
                                                                  workflow_name) if project_name and workflow_name else None
-    workflow_execution_resp = dumps({'data': workflow_execution_list if workflow_execution_list else []})
-    app.logger.info(
-        'Get the metadata of the workflow execution(project={}, workflow={}): {}.'.format(project_name, workflow_name,
-                                                                                          workflow_execution_resp))
-    return workflow_execution_resp
+    return dumps({'data': workflow_execution_list if workflow_execution_list else []})
 
 
 @app.route('/api/job-execution')
 def job_execution_metadata():
     workflow_execution_id = request.args.get('workflow_execution_id')
     job_execution_list = scheduler.list_job_executions(workflow_execution_id) if workflow_execution_id else None
-    job_execution_resp = dumps({'data': job_execution_list if job_execution_list else []})
-    app.logger.info(
-        'Get the metadata of the job execution(workflow_execution={}): {}.'.format(
-            request.args.get('workflow_execution_id'), job_execution_resp))
-    return job_execution_resp
+    return dumps({'data': job_execution_list if job_execution_list else []})
 
 
 @app.route('/api/dataset')
@@ -336,11 +337,7 @@ def dataset_metadata():
                                        dataset_name=request.args.get('name'),
                                        page_size=int(request.args.get('pageSize')),
                                        offset=(int(request.args.get('pageNo')) - 1) * int(request.args.get('pageSize')))
-    dataset_resp = dumps({'data': dataset_list if dataset_list else []})
-    app.logger.info(
-        'Get the metadata of the dataset(id={}, name={}): {}.'.format(request.args.get('uuid'),
-                                                                      request.args.get('name'), dataset_resp))
-    return dataset_resp
+    return dumps({'data': dataset_list if dataset_list else []})
 
 
 @app.route('/api/model')
@@ -349,10 +346,8 @@ def model_metadata():
                                               page_size=int(request.args.get('pageSize')),
                                               offset=(int(request.args.get('pageNo')) - 1) * int(
                                                   request.args.get('pageSize')))
-    model_resp = json.dumps({'data': [model.__dict__ for model in model_list] if model_list else []})
-    app.logger.info(
-        'Get the metadata of the model(name={}): {}.'.format(request.args.get('name'), model_resp))
-    return model_resp
+    return json.dumps({'data': [{'model_name': model.model_name, 'model_desc': model.model_desc} for model in
+                                model_list] if model_list else []})
 
 
 @app.route('/api/model-version')
@@ -362,10 +357,7 @@ def model_version_metadata():
                                            page_size=int(request.args.get('pageSize')),
                                            offset=(int(request.args.get('pageNo')) - 1) * int(
                                                request.args.get('pageSize')))
-    model_resp = json.dumps({'data': [model.__dict__ for model in model_list] if model_list else []})
-    app.logger.info(
-        'Get the metadata of the model(name={}): {}.'.format(request.args.get('name'), model_resp))
-    return model_resp
+    return json.dumps({'data': [model.__dict__ for model in model_list] if model_list else []})
 
 
 @app.route('/api/artifact')
@@ -375,11 +367,7 @@ def artifact_metadata():
                                         page_size=int(request.args.get('pageSize')),
                                         offset=(int(request.args.get('pageNo')) - 1) * int(
                                             request.args.get('pageSize')))
-    artifact_resp = dumps({'data': artifact_list if artifact_list else []})
-    app.logger.info(
-        'Get the metadata of the artifact(id={}, name={}): {}.'.format(request.args.get('uuid'),
-                                                                       request.args.get('name'), artifact_resp))
-    return artifact_resp
+    return dumps({'data': artifact_list if artifact_list else []})
 
 
 def main(argv):
@@ -405,6 +393,8 @@ def main(argv):
             scheduler_class = arg
         elif opt in ("-a", "--airflow_web_server_uri"):
             airflow_web_server_uri = arg
+    if not port:
+        port = 50053
     if not scheduler_class:
         scheduler_class = 'ai_flow_plugins.scheduler_plugins.airflow.airflow_scheduler.AirFlowScheduler'
     init(store_uri, scheduler_class, airflow_web_server_uri)
