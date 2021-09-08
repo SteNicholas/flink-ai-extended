@@ -42,6 +42,9 @@ limitations under the License. -->
         <span slot="_properties" slot-scope="text">
           <ellipsis :length="32" tooltip>{{ text }}</ellipsis>
         </span>
+         <span slot="_execution_label" slot-scope="text">
+          <ellipsis :length="32" tooltip>{{ text }}</ellipsis>
+        </span>
       </s-table>
     </a-card>
   </page-header-wrapper>
@@ -94,6 +97,11 @@ const columns = [
     title: 'Properties',
     dataIndex: '_properties',
     scopedSlots: { customRender: '_properties' }
+  },
+  {
+    title: 'Execution Label',
+    dataIndex: '_execution_label',
+    scopedSlots: { customRender: '_execution_label' }
   },
   {
     title: 'Start Date',
