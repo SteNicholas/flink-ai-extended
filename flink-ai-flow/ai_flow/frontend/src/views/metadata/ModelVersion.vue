@@ -18,13 +18,13 @@ limitations under the License. -->
         <a-form layout="inline">
           <a-row :gutter="48">
             <a-col :md="8" :sm="24">
-              <a-form-item label="ID">
-                <a-input v-model="queryParam.uuid" placeholder=""/>
+              <a-form-item label="Model Name">
+                <a-input v-model="queryParam.model_name" placeholder=""/>
               </a-form-item>
             </a-col>
             <a-col :md="8" :sm="24">
-              <a-form-item label="Name">
-                <a-input v-model="queryParam.name" placeholder=""/>
+              <a-form-item label="Model Version">
+                <a-input v-model="queryParam.model_version" placeholder=""/>
               </a-form-item>
             </a-col>
             <a-col :md="!advanced && 8 || 24" :sm="24">

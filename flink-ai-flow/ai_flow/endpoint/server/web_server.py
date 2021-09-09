@@ -24,12 +24,17 @@ from typing import List, Dict
 
 from flask import Flask, request
 from flask_cors import CORS
+from werkzeug.local import LocalProxy
 
 from ai_flow import WorkflowMeta
 from ai_flow.ai_graph.ai_graph import AIGraph
 from ai_flow.ai_graph.ai_node import AINode, ReadDatasetNode, WriteDatasetNode
 from ai_flow.ai_graph.data_edge import DataEdge
+from ai_flow.endpoint.server.server_config import DBType
 from ai_flow.plugin_interface.scheduler_interface import Scheduler, SchedulerFactory
+from ai_flow.store.abstract_store import Filters, AbstractStore
+from ai_flow.store.db.db_util import extract_db_engine_from_uri, parse_mongo_uri
+from ai_flow.store.mongo_store import MongoStore
 from ai_flow.store.sqlalchemy_store import SqlAlchemyStore
 from ai_flow.util.json_utils import loads, Jsonable, dumps
 from ai_flow.workflow.control_edge import ControlEdge
@@ -53,14 +58,22 @@ dictConfig({
 app = Flask(__name__)
 CORS(app=app)
 
-store: SqlAlchemyStore = None
+store: AbstractStore = None
 scheduler: Scheduler = None
 airflow: str = None
 
 
 def init(store_uri: str, scheduler_class: str, airflow_web_server_uri: str):
     global store
-    store = SqlAlchemyStore(store_uri)
+    if DBType.value_of(extract_db_engine_from_uri(store_uri)) == DBType.MONGODB:
+        username, password, host, port, db = parse_mongo_uri(store_uri)
+        store = MongoStore(host=host,
+                           port=int(port),
+                           username=username,
+                           password=password,
+                           db=db)
+    else:
+        store = SqlAlchemyStore(store_uri)
     global scheduler
     scheduler = SchedulerFactory.create_scheduler(scheduler_class,
                                                   {'notification_service_uri': None, 'airflow_deploy_path': None})
@@ -268,22 +281,32 @@ def build_graph(name_nodes: Dict[str, Node], parent_edges: Dict[str, List[Edge]]
     return json.dumps(graph_nodes)
 
 
+def filter_class(filter_name: str):
+    return getattr(sys.modules[store.__module__], filter_name)
+
+
+def build_filters(req: LocalProxy):
+    filters = Filters()
+    for key, value in req.args.items():
+        if key not in ('pageNo', 'pageSize') and value:
+            filters.add_filter((filter_class('FilterEqual')(key), value))
+    return filters
+
+
 @app.route('/api/project')
 def project_metadata():
-    project_list = store.list_project(project_id=request.args.get('uuid'),
-                                      project_name=request.args.get('name'),
-                                      page_size=int(request.args.get('pageSize')),
-                                      offset=(int(request.args.get('pageNo')) - 1) * int(request.args.get('pageSize')))
+    project_list = store.list_projects(page_size=int(request.args.get('pageSize')),
+                                       offset=(int(request.args.get('pageNo')) - 1) * int(request.args.get('pageSize')),
+                                       filters=build_filters(request))
     return dumps({'data': project_list if project_list else []})
 
 
 @app.route('/api/workflow')
 def workflow_metadata():
-    workflow_list = store.list_workflows(workflow_id=request.args.get('uuid'),
-                                         workflow_name=request.args.get('name'),
-                                         page_size=int(request.args.get('pageSize')),
+    workflow_list = store.list_workflows(page_size=int(request.args.get('pageSize')),
                                          offset=(int(request.args.get('pageNo')) - 1) * int(
-                                             request.args.get('pageSize')))
+                                             request.args.get('pageSize')),
+                                         filters=build_filters(request))
     return dumps({'data': workflow_list if workflow_list else []})
 
 
@@ -333,40 +356,38 @@ def job_execution_metadata():
 
 @app.route('/api/dataset')
 def dataset_metadata():
-    dataset_list = store.list_datasets(dataset_id=request.args.get('uuid'),
-                                       dataset_name=request.args.get('name'),
-                                       page_size=int(request.args.get('pageSize')),
-                                       offset=(int(request.args.get('pageNo')) - 1) * int(request.args.get('pageSize')))
+    dataset_list = store.list_datasets(page_size=int(request.args.get('pageSize')),
+                                       offset=(int(request.args.get('pageNo')) - 1) * int(request.args.get('pageSize')),
+                                       filters=build_filters(request))
     return dumps({'data': dataset_list if dataset_list else []})
 
 
 @app.route('/api/model')
 def model_metadata():
-    model_list = store.list_registered_models(model_name=request.args.get('model_name'),
-                                              page_size=int(request.args.get('pageSize')),
+    model_list = store.list_registered_models(page_size=int(request.args.get('pageSize')),
                                               offset=(int(request.args.get('pageNo')) - 1) * int(
-                                                  request.args.get('pageSize')))
+                                                  request.args.get('pageSize')),
+                                              filters=build_filters(request))
     return json.dumps({'data': [{'model_name': model.model_name, 'model_desc': model.model_desc} for model in
                                 model_list] if model_list else []})
 
 
 @app.route('/api/model-version')
 def model_version_metadata():
-    model_list = store.list_model_versions(model_name=request.args.get('model_name'),
-                                           model_version=request.args.get('model_version'),
-                                           page_size=int(request.args.get('pageSize')),
-                                           offset=(int(request.args.get('pageNo')) - 1) * int(
-                                               request.args.get('pageSize')))
-    return json.dumps({'data': [model.__dict__ for model in model_list] if model_list else []})
+    model_version_list = store.list_model_versions(page_size=int(request.args.get('pageSize')),
+                                                   offset=(int(request.args.get('pageNo')) - 1) * int(
+                                                       request.args.get('pageSize')),
+                                                   filters=build_filters(request))
+    return json.dumps(
+        {'data': [model_version.__dict__ for model_version in model_version_list] if model_version_list else []})
 
 
 @app.route('/api/artifact')
 def artifact_metadata():
-    artifact_list = store.list_artifact(artifact_id=request.args.get('uuid'),
-                                        artifact_name=request.args.get('name'),
-                                        page_size=int(request.args.get('pageSize')),
-                                        offset=(int(request.args.get('pageNo')) - 1) * int(
-                                            request.args.get('pageSize')))
+    artifact_list = store.list_artifacts(page_size=int(request.args.get('pageSize')),
+                                         offset=(int(request.args.get('pageNo')) - 1) * int(
+                                             request.args.get('pageSize')),
+                                         filters=build_filters(request))
     return dumps({'data': artifact_list if artifact_list else []})
 
 
