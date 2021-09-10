@@ -72,23 +72,26 @@ class FileTaskHandler(logging.Handler):
             self.handler.close()
 
     def _render_filename(self, ti, try_number):
+        if hasattr(ti, 'seq_num') and ti.seq_num > 0:
+            number = '{}_{}'.format(ti.seq_num, try_number)
+        else:
+            number = try_number
         if self.filename_jinja_template:
             if hasattr(ti, 'task'):
                 jinja_context = ti.get_template_context()
-                jinja_context['try_number'] = try_number
+                jinja_context['try_number'] = number
             else:
                 jinja_context = {
                     'ti': ti,
                     'ts': ti.execution_date.isoformat(),
-                    'try_number': try_number,
+                    'try_number': number,
                 }
             return self.filename_jinja_template.render(**jinja_context)
-
         return self.filename_template.format(
             dag_id=ti.dag_id,
             task_id=ti.task_id,
             execution_date=ti.execution_date.isoformat(),
-            try_number=try_number,
+            try_number=number,
         )
 
     def _read_grouped_logs(self):
@@ -242,8 +245,7 @@ class FileTaskHandler(logging.Handler):
         # writable by both users, then it's possible that re-running a task
         # via the UI (or vice versa) results in a permission error as the task
         # tries to write to a log file created by the other user.
-        number = '{}_{}'.format(ti.seq_num, ti.try_number) if ti.seq_num > 0 else ti.try_number
-        relative_path = self._render_filename(ti, number)
+        relative_path = self._render_filename(ti, ti.try_number)
         full_path = os.path.join(self.local_base, relative_path)
         directory = os.path.dirname(full_path)
         # Create the log file and give it group writable permissions

@@ -1144,13 +1144,28 @@ class Airflow(AirflowBaseView):  # noqa: D101  pylint: disable=too-many-public-m
             .first()
         )
 
-        num_logs = 0
-        if ti is not None:
-            num_logs = ti.next_try_number - 1
-            if ti.state == State.UP_FOR_RESCHEDULE:
-                # Tasks in reschedule state decremented the try number
-                num_logs += 1
-        logs = [''] * num_logs
+        tes = (
+            session.query(models.TaskExecution)
+            .filter(
+                models.TaskExecution.dag_id == dag_id,
+                models.TaskExecution.task_id == task_id,
+                models.TaskExecution.execution_date == dttm,
+            )
+            .all()
+        )
+
+        # num_logs = 0
+        # if ti is not None:
+        #     num_logs = ti.next_try_number - 1
+        #     if ti.state == State.UP_FOR_RESCHEDULE:
+        #         # Tasks in reschedule state decremented the try number
+        #         num_logs += 1
+        # logs = [''] * num_logs
+        logs = []
+        if tes is not None:
+            for te in tes:
+                for i in range(te.try_number):
+                    logs.append('{}_{}'.format(te.seq_num, i+1))
         root = request.args.get('root', '')
         return self.render_template(
             'airflow/ti_log.html',
