@@ -1040,6 +1040,10 @@ class Airflow(AirflowBaseView):  # noqa: D101  pylint: disable=too-many-public-m
         dag_id = request.args.get('dag_id')
         task_id = request.args.get('task_id')
         execution_date = request.args.get('execution_date')
+        if request.args.get('seq_num') is not None:
+            seq_num = int(request.args.get('seq_num'))
+        else:
+            seq_num = None
         if request.args.get('try_number') is not None:
             try_number = int(request.args.get('try_number'))
         else:
@@ -1144,34 +1148,37 @@ class Airflow(AirflowBaseView):  # noqa: D101  pylint: disable=too-many-public-m
             .first()
         )
 
-        tes = (
-            session.query(models.TaskExecution)
-            .filter(
-                models.TaskExecution.dag_id == dag_id,
-                models.TaskExecution.task_id == task_id,
-                models.TaskExecution.execution_date == dttm,
-            )
-            .all()
-        )
-
-        # num_logs = 0
-        # if ti is not None:
-        #     num_logs = ti.next_try_number - 1
-        #     if ti.state == State.UP_FOR_RESCHEDULE:
-        #         # Tasks in reschedule state decremented the try number
-        #         num_logs += 1
-        # logs = [''] * num_logs
         logs = []
-        if tes is not None:
-            for te in tes:
-                for i in range(te.try_number):
-                    logs.append('{}_{}'.format(te.seq_num, i+1))
+        if ti:
+            if hasattr(ti, 'seq_num') and ti.seq_num > 0:
+                tes = (
+                    session.query(models.TaskExecution)
+                        .filter(
+                            models.TaskExecution.dag_id == dag_id,
+                            models.TaskExecution.task_id == task_id,
+                            models.TaskExecution.execution_date == dttm,
+                        ).all()
+                )
+                if tes:
+                    for te in tes:
+                        for i in range(te.try_number):
+                            logs.append('{}_{}'.format(te.seq_num, i + 1))
+            else:
+                num_logs = 0
+                if ti is not None:
+                    num_logs = ti.next_try_number - 1
+                    if ti.state == State.UP_FOR_RESCHEDULE:
+                        # Tasks in reschedule state decremented the try number
+                        num_logs += 1
+                logs = [''] * num_logs
         root = request.args.get('root', '')
         return self.render_template(
             'airflow/ti_log.html',
             logs=logs,
             dag=dag_model,
-            title="Log by attempts",
+            title='Log by sequences and attempts'
+            if ti and hasattr(ti, 'seq_num') and ti.seq_num > 0
+            else 'Log by attempts',
             dag_id=dag_id,
             task_id=task_id,
             execution_date=execution_date,
