@@ -197,7 +197,7 @@ def generate_graph(workflow_meta: WorkflowMeta):
 
 
 def extract_graph(workflow_meta: WorkflowMeta):
-    graph_meta: Dict[str, str] = json.loads(workflow_meta.graph)
+    graph_meta: Dict[str, str] = json.loads(workflow_meta.graph, strict=False)
     if '_context_extractor' in graph_meta:
         graph_meta.pop('_context_extractor', None)
     return loads(dumps(graph_meta))
