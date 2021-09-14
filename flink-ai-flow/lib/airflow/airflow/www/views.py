@@ -32,7 +32,6 @@ from operator import itemgetter
 from typing import Dict, List, Optional, Set, Tuple
 from urllib.parse import parse_qsl, unquote, urlencode, urlparse
 
-import airflow
 import lazy_object_proxy
 import nvd3
 import sqlalchemy as sqla
@@ -2007,8 +2006,17 @@ class Airflow(AirflowBaseView):  # noqa: D101  pylint: disable=too-many-public-m
 
         tis = dag.get_task_instances(start_date=min_date, end_date=base_date)
         task_instances: Dict[Tuple[str, datetime], models.TaskInstance] = {}
+        task_logs: Dict[str, List[str]] = {}
         for ti in tis:
             task_instances[(ti.task_id, ti.execution_date)] = ti
+            if hasattr(ti, 'seq_num') and ti.seq_num > 0:
+                sequence_attempts = []
+                task_executions = ti.get_task_executions()
+                if task_executions:
+                    for te in task_executions:
+                        for i in range(1, te.try_number + 1):
+                            sequence_attempts.append('{}_{}'.format(te.seq_num, i))
+                task_logs.update({ti.task_id: sequence_attempts})
 
         expanded = set()
         # The default recursion traces every path so that tree view has full
@@ -2148,6 +2156,7 @@ class Airflow(AirflowBaseView):  # noqa: D101  pylint: disable=too-many-public-m
             root=root,
             form=form,
             dag=dag,
+            task_logs=task_logs,
             doc_md=doc_md,
             data=data,
             blur=blur,
@@ -2208,7 +2217,18 @@ class Airflow(AirflowBaseView):  # noqa: D101  pylint: disable=too-many-public-m
         form = GraphForm(data=dt_nr_dr_data)
         form.execution_date.choices = dt_nr_dr_data['dr_choices']
 
-        task_instances = {ti.task_id: alchemy_to_dict(ti) for ti in dag.get_task_instances(dttm, dttm)}
+        task_instances:  Dict[str, TaskInstance] = {}
+        task_logs: Dict[str, List[str]] = {}
+        for ti in dag.get_task_instances(dttm, dttm):
+            task_instances.update({ti.task_id: alchemy_to_dict(ti)})
+            if hasattr(ti, 'seq_num') and ti.seq_num > 0:
+                sequence_attempts = []
+                task_executions = ti.get_task_executions()
+                if task_executions:
+                    for te in task_executions:
+                        for i in range(1, te.try_number + 1):
+                            sequence_attempts.append('{}_{}'.format(te.seq_num, i))
+                task_logs.update({ti.task_id: sequence_attempts})
         tasks: Dict[str, Dict[str, str]] = {}
         events: Dict[str, Tuple[str, str, str]] = {}
         for t in dag.tasks:
@@ -2270,6 +2290,7 @@ class Airflow(AirflowBaseView):  # noqa: D101  pylint: disable=too-many-public-m
             blur=blur,
             root=root or '',
             task_instances=task_instances,
+            task_logs=task_logs,
             tasks=tasks,
             events=send_events,
             nodes=nodes,

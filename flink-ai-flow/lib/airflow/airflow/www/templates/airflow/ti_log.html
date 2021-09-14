@@ -28,7 +28,7 @@
       <ul class="nav nav-pills" role="tablist">
         {% for log in logs %}
           <li role="presentation" class="{{ 'active' if loop.last else '' }}">
-            <a href="# {{ log }}" aria-controls=" {{ log }}" role="tab" data-toggle="tab">
+            <a href="#{{ log }}" aria-controls=" {{ log }}" role="tab" data-toggle="tab">
               {{ log }}
             </a>
           </li>
@@ -100,7 +100,7 @@
         try_number = sequence_attempts.split("_")[1];
       }
       console.debug("Auto-tailing log for dag_id: {{ dag_id }}, task_id: {{ task_id }}, \
-       execution_date: {{ execution_date }}, try_number: " + try_number + ", metadata: " + JSON.stringify(metadata));
+      execution_date: {{ execution_date }}, try_number: " + try_number + ", metadata: " + JSON.stringify(metadata));
 
       return Promise.resolve(
         $.ajax({
@@ -116,7 +116,11 @@
         })).then(res => {
           // Stop recursive call to backend when error occurs.
           if (!res) {
-            document.getElementById("loading-"+ seq_num + "_" + try_number).style.display = "none";
+            if (seq_num == null) {
+              document.getElementById("loading-"+ try_number).style.display = "none";
+            } else {
+              document.getElementById("loading-"+ seq_num + "_" + try_number).style.display = "none";
+            }
             return;
           }
           // res.error is a boolean
@@ -125,7 +129,11 @@
             if (res.message) {
               console.error("Error while retrieving log: " + res.message);
             }
-            document.getElementById("loading-"+ seq_num + "_" + try_number).style.display = "none";
+            if (seq_num == null) {
+              document.getElementById("loading-"+ try_number).style.display = "none";
+            } else {
+              document.getElementById("loading-"+ seq_num + "_" + try_number).style.display = "none";
+            }
             return;
           }
 
@@ -146,7 +154,12 @@
                 log_pre_block = document.createElement('pre');
                 log_div_block.appendChild(log_pre_block);
                 log_pre_block.innerHTML = "<code id=\"" + log_block_element_id + "\"  ></code>";
-                document.getElementById("log-group-" + seq_num + "_" + try_number).appendChild(log_div_block);
+                if (seq_num == null) {
+                  document.getElementById("log-group-" + try_number).appendChild(log_div_block);
+                } else {
+                  document.getElementById("log-group-" + seq_num + "_" + try_number).appendChild(log_div_block);
+                }
+
                 log_block = document.getElementById(log_block_element_id);
               }
 
@@ -165,11 +178,15 @@
           }
 
           if (res.metadata.end_of_log) {
-            document.getElementById("loading-"+ seq_num + "_" + try_number).style.display = "none";
+            if (seq_num == null) {
+              document.getElementById("loading-"+ try_number).style.display = "none";
+            } else {
+              document.getElementById("loading-"+ seq_num + "_" + try_number).style.display = "none";
+            }
             return;
           }
           return recurse().then(() => autoTailingLog(
-            try_number, res.metadata, auto_tailing));
+            sequence_attempts, res.metadata, auto_tailing));
         });
     }
     $(document).ready(function() {
@@ -182,7 +199,7 @@
       // An optimization here is to render from latest attempt.
       for(let i = TOTAL_ATTEMPTS; i >= 1; i--) {
         // Only auto_tailing the page when streaming the latest attempt.
-        autoTailingLog(LOGS[0], null, auto_tailing=(i == TOTAL_ATTEMPTS));
+        autoTailingLog(LOGS[i-1], null, auto_tailing=(i == TOTAL_ATTEMPTS));
       }
     });
   </script>

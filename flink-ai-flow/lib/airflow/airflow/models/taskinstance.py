@@ -2054,6 +2054,11 @@ class TaskInstance(Base, LoggingMixin):  # pylint: disable=R0902,R0904
             for ti in tis
         )
 
+    @provide_session
+    def get_task_executions(self, session=None):
+        return session.query(TaskExecution).filter(TaskExecution.dag_id == self.dag_id, TaskExecution.task_id == self.task_id)\
+            .order_by(TaskExecution.seq_num, TaskExecution.try_number).all()
+
 
 # State of the task instance.
 # Stores string version of the task state.
