@@ -72,26 +72,22 @@ class FileTaskHandler(logging.Handler):
             self.handler.close()
 
     def _render_filename(self, ti, try_number):
-        if hasattr(ti, 'seq_num') and ti.seq_num > 0:
-            number = '{}_{}'.format(ti.seq_num, try_number)
-        else:
-            number = try_number
         if self.filename_jinja_template:
             if hasattr(ti, 'task'):
                 jinja_context = ti.get_template_context()
-                jinja_context['try_number'] = number
+                jinja_context['try_number'] = try_number
             else:
                 jinja_context = {
                     'ti': ti,
                     'ts': ti.execution_date.isoformat(),
-                    'try_number': number,
+                    'try_number': try_number,
                 }
             return self.filename_jinja_template.render(**jinja_context)
         return self.filename_template.format(
             dag_id=ti.dag_id,
             task_id=ti.task_id,
             execution_date=ti.execution_date.isoformat(),
-            try_number=number,
+            try_number=try_number,
         )
 
     def _read_grouped_logs(self):
@@ -202,15 +198,17 @@ class FileTaskHandler(logging.Handler):
         # So the log for a particular task try will only show up when
         # try number gets incremented in DB, i.e logs produced the time
         # after cli run and before try_number + 1 in DB will not be displayed.
-
-        if try_number is None:
-            next_try = task_instance.next_try_number
-            try_numbers = list(range(1, next_try))
-        elif try_number < 1:
-            logs = [
-                [('default_host', f'Error fetching the logs. Try number {try_number} is invalid.')],
-            ]
-            return logs
+        if isinstance(try_number, int):
+            if try_number is None:
+                next_try = task_instance.next_try_number
+                try_numbers = list(range(1, next_try))
+            elif try_number < 1:
+                logs = [
+                    [('default_host', f'Error fetching the logs. Try number {try_number} is invalid.')],
+                ]
+                return logs
+            else:
+                try_numbers = [try_number]
         else:
             try_numbers = [try_number]
 
@@ -245,7 +243,11 @@ class FileTaskHandler(logging.Handler):
         # writable by both users, then it's possible that re-running a task
         # via the UI (or vice versa) results in a permission error as the task
         # tries to write to a log file created by the other user.
-        relative_path = self._render_filename(ti, ti.try_number)
+        if hasattr(ti, 'seq_num') and ti.seq_num > 0:
+            number = '{}_{}'.format(ti.seq_num, ti.try_number)
+        else:
+            number = ti.try_number
+        relative_path = self._render_filename(ti, number)
         full_path = os.path.join(self.local_base, relative_path)
         directory = os.path.dirname(full_path)
         # Create the log file and give it group writable permissions

@@ -16,7 +16,7 @@
 # under the License.
 
 import logging
-from typing import Any, Dict, Iterator, List, Optional, Tuple
+from typing import Any, Dict, Iterator, List, Optional, Tuple, Union
 
 from cached_property import cached_property
 
@@ -30,7 +30,7 @@ class TaskLogReader:
     """Task log reader"""
 
     def read_log_chunks(
-        self, ti: TaskInstance, try_number: Optional[int], metadata
+        self, ti: TaskInstance, try_number: Optional[Union[int, str]], metadata
     ) -> Tuple[List[str], Dict[str, Any]]:
         """
         Reads chunks of Task Instance logs.
@@ -39,7 +39,7 @@ class TaskLogReader:
         :type ti: TaskInstance
         :param try_number: If provided, logs for the given try will be returned.
             Otherwise, logs from all attempts are returned.
-        :type try_number: Optional[int]
+        :type try_number: Optional[Union[int, str]]
         :param metadata: A dictionary containing information about how to read the task log
         :type metadata: dict
         :rtype: Tuple[List[str], Dict[str, Any]]
@@ -59,14 +59,14 @@ class TaskLogReader:
         metadata = metadatas[0]
         return logs, metadata
 
-    def read_log_stream(self, ti: TaskInstance, try_number: Optional[int], metadata: dict) -> Iterator[str]:
+    def read_log_stream(self, ti: TaskInstance, try_number: Optional[Union[int, str]], metadata: dict) -> Iterator[str]:
         """
         Used to continuously read log to the end
 
         :param ti: The Task Instance
         :type ti: TaskInstance
         :param try_number: the task try number
-        :type try_number: Optional[int]
+        :type try_number: Optional[Union[int, str]]
         :param metadata: A dictionary containing information about how to read the task log
         :type metadata: dict
         :rtype: Iterator[str]
@@ -103,14 +103,14 @@ class TaskLogReader:
         """Check if the logging handler supports external links (e.g. to Elasticsearch, Stackdriver, etc)."""
         return isinstance(self.log_handler, ExternalLoggingMixin)
 
-    def render_log_filename(self, ti: TaskInstance, try_number: Optional[int] = None):
+    def render_log_filename(self, ti: TaskInstance, try_number: Optional[Union[int, str]] = None):
         """
         Renders the log attachment filename
 
         :param ti: The task instance
         :type ti: TaskInstance
         :param try_number: The task try number
-        :type try_number: Optional[int]
+        :type try_number: Optional[Union[int, str]]
         :rtype: str
         """
         filename_template = conf.get('logging', 'LOG_FILENAME_TEMPLATE')
