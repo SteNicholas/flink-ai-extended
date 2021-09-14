@@ -1092,7 +1092,7 @@ class Airflow(AirflowBaseView):  # noqa: D101  pylint: disable=too-many-public-m
                 error=True,
                 metadata={"end_of_log": True},
             )
-        if seq_num is not None and seq_num > 0:
+        if seq_num is not None:
             try_number = '{}_{}'.format(seq_num, try_number)
         try:
             dag = current_app.dag_bag.get_dag(dag_id)

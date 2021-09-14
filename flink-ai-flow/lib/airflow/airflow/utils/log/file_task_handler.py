@@ -83,6 +83,7 @@ class FileTaskHandler(logging.Handler):
                     'try_number': try_number,
                 }
             return self.filename_jinja_template.render(**jinja_context)
+
         return self.filename_template.format(
             dag_id=ti.dag_id,
             task_id=ti.task_id,

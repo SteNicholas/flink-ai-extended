@@ -72,8 +72,16 @@ class TaskLogReader:
         :rtype: Iterator[str]
         """
         if try_number is None:
-            next_try = ti.next_try_number
-            try_numbers = list(range(1, next_try))
+            if hasattr(ti, 'seq_num') and ti.seq_num > 0:
+                try_numbers = []
+                task_executions = ti.get_task_executions()
+                if task_executions:
+                    for te in task_executions:
+                        for i in range(1, te.try_number + 1):
+                            try_numbers.append('{}_{}'.format(te.seq_num, i))
+            else:
+                next_try = ti.next_try_number
+                try_numbers = list(range(1, next_try))
         else:
             try_numbers = [try_number]
         for current_try_number in try_numbers:
