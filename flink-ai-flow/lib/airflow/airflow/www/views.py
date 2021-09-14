@@ -32,6 +32,7 @@ from operator import itemgetter
 from typing import Dict, List, Optional, Set, Tuple
 from urllib.parse import parse_qsl, unquote, urlencode, urlparse
 
+import airflow
 import lazy_object_proxy
 import nvd3
 import sqlalchemy as sqla
